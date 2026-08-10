@@ -851,7 +851,7 @@ function renderDash(){
     </div><div class="tap-hint">${t("tap_hint")}</div>
     ${chartHTML(isUKI)}`;
 }
-function wardCounts(w){const it=items.filter(x=>x.wad===w);
+function wardCounts(w){const it=items.filter(x=>wardBase(x.wad)===w);
   return {total:it.length,p:it.filter(x=>x.status==="Baru").length,a:it.filter(x=>x.status==="Dijawab").length,r:it.filter(x=>x.status==="Selesai").length};}
 function bldCounts(b){let p=0,tt=0;b.wards.forEach(w=>{const c=wardCounts(w);tt+=c.total;p+=c.p;});return {total:tt,pending:p};}
 function openBuilding(id){selBuilding=id;render();}
@@ -1136,7 +1136,7 @@ function renderList(){
       <option value="Dijawab"${listFilter==="Dijawab"?" selected":""}>${t("f_answered_verify")}</option>
       <option value="done"${listFilter==="done"?" selected":""}>${t("f_answered")}</option>
       <option value="Selesai"${listFilter==="Selesai"?" selected":""}>${t("f_resolved")}</option></select>`;
-  if(curWard)filtered=filtered.filter(x=>x.wad===curWard);
+  if(curWard)filtered=filtered.filter(x=>wardBase(x.wad)===curWard);
   const body=filtered.length?`<div class="list">${filtered.map(cardHTML).join("")}</div>`
     :`<div class="empty"><div class="ic">📋</div><p>${t("empty_view")}</p></div>`;
   content.innerHTML=`<div class="view-title">${t("list_title")}</div><div class="toolbar">${statusSel}${wardSel}<button class="btn-report" onclick="exportReport()">${t("btn_report")}</button></div>${body}`;

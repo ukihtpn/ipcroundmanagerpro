@@ -665,7 +665,8 @@ function overdueText(n){
 function updateLangUI(){document.querySelectorAll(".lang button").forEach(b=>b.classList.toggle("on",b.dataset.l===lang));}
 function applyLoginText(){loginSub.textContent=t("login_sub");labUser.textContent=t("lab_user");labPass.textContent=t("lab_pass");loginBtn.textContent=t("btn_login");rememberLabel.textContent=t("remember_me");}
 function applyChrome(){
-  whoText.textContent=user.role==="UKI"?(ukiStaff||t("badge_monitor")):(t("ward")+" "+user.ward);
+  const wb=user.role==="UKI"?null:buildingOf(user.ward);
+  whoText.textContent=user.role==="UKI"?(ukiStaff||t("badge_monitor")):(user.ward+(wb?" · "+bldName(wb):""));
   hdrUnit.textContent=t("hdr_unit_line");
   logoutText.textContent=t("logout");
   buildNav();

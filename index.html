@@ -484,6 +484,9 @@ const WARD_USER={"W1":"w1","W2":"w2","W3":"w3","W4":"w4","W6 ISO":"w6iso","W7":"
 function wardCred(w){var base=wardBase(w);var u=WARD_USER[base]||base.toLowerCase().replace(/[^a-z0-9]/g,"").slice(0,10);return {user:u, pass:u+"123"};}
 function appURL(){ try{ if(location.protocol.indexOf("http")===0) return location.origin; }catch(e){} return "https://ipcroundmanagerpro.vercel.app"; }
 const IPC_DRIVE="ukihtpn@moh.gov.my";
+function ymKey(d){var s=String(d||"");var m=s.match(/(\d{4})-(\d{2})/);if(m)return m[1]+"-"+m[2];var dt=new Date(s);if(!isNaN(dt.getTime()))return dt.getFullYear()+"-"+String(dt.getMonth()+1).padStart(2,"0");return "";}
+function yearOf(d){var k=ymKey(d);return k?k.slice(0,4):"";}
+function monthIdx(d){var k=ymKey(d);return k?parseInt(k.slice(5,7),10)-1:-1;}
 function waRemind(id){
   var it=items.find(function(x){return x.id===id;}); if(!it)return;
   var cr=wardCred(it.wad);
@@ -1283,7 +1286,17 @@ function auditNegatives(){
 }
 function auditWardLabel(){var zEl=document.getElementById("audZone");return (isED(auditWard)&&zEl)?(auditWard+" — "+zEl.value):auditWard;}
 function auditBadgeCls(pct){var c=auditPerf(pct).cls;return c==="good"?"r":c==="sat"?"a":"p";}
-function openReportWindow(html){var w=window.open("","_blank");if(w){w.document.write(html);w.document.close();}else{toast(t("aud_popup"),true);}}
+function openReportWindow(html){
+  try{
+    var blob=new Blob([html],{type:"text/html;charset=utf-8"});
+    var url=URL.createObjectURL(blob);
+    var w=window.open(url,"_blank");
+    if(!w){ toast(t("aud_popup"),true); return; }
+    setTimeout(function(){ try{URL.revokeObjectURL(url);}catch(e){} }, 60000);
+  }catch(e){
+    var w2=window.open("","_blank"); if(w2){ w2.document.write(html); w2.document.close(); } else { toast(t("aud_popup"),true); }
+  }
+}
 function buildAuditReportHTML(o){
   var perf=auditPerf(o.overall);
   var secRows=(o.secs||[]).map(function(sc){
@@ -1419,7 +1432,7 @@ function auditsForWard(w){var b=wardBase(w);return audits.filter(function(a){ret
 function latestAudit(w){var l=auditsForWard(w);return l.length?l[0]:null;}
 function bldAuditSummary(b){var done=0,sum=0;b.wards.forEach(function(w){var a=latestAudit(w);if(a){done++;sum+=Number(a.overall)||0;}});return {done:done,avg:done?Math.round(sum/done):0};}
 /* dashboard coverage matrix: location (rows) × month (cols), all 12 months at a glance */
-function dataYears(){var s={};items.forEach(function(x){var y=String(x.tarikh).slice(0,4);if(/^\d{4}$/.test(y))s[y]=1;});audits.forEach(function(a){var y=String(a.date).slice(0,4);if(/^\d{4}$/.test(y))s[y]=1;});var arr=Object.keys(s).sort().reverse();if(!arr.length)arr=[String(new Date().getFullYear())];return arr;}
+function dataYears(){var s={};items.forEach(function(x){var y=yearOf(x.tarikh);if(y)s[y]=1;});audits.forEach(function(a){var y=yearOf(a.date);if(y)s[y]=1;});sessions.forEach(function(ss){var y=yearOf(ss.date);if(y)s[y]=1;});var arr=Object.keys(s).sort().reverse();if(!arr.length)arr=[String(new Date().getFullYear())];return arr;}
 function setChartBld(id){chartBld=id;render();}
 function setDashYear(y){dashYear=y;render();}
 function dashChart(){
@@ -1432,7 +1445,7 @@ function dashChart(){
     .concat(sessions.filter(function(s){return s.status==="finalized" || (s.done||0)>0;}).map(function(s){return {w:wardBase(s.ward), d:String(s.date)};}));
   var src = roundType==="grand" ? grandRecs : items.map(function(x){return {w:wardBase(x.wad), d:String(x.tarikh)};});
   var cover={};
-  src.forEach(function(r){ if(r.d.slice(0,4)!==dashYear) return; if(b.wards.indexOf(r.w)<0) return; var mi=parseInt(r.d.slice(5,7),10)-1; if(mi<0||mi>11) return; if(!cover[r.w])cover[r.w]=[]; cover[r.w][mi]=true; });
+  src.forEach(function(r){ if(yearOf(r.d)!==dashYear) return; if(b.wards.indexOf(r.w)<0) return; var mi=monthIdx(r.d); if(mi<0||mi>11) return; if(!cover[r.w])cover[r.w]=[]; cover[r.w][mi]=true; });
   var cls=roundType;
   var head='<th class="mx-loc">'+t("cov_location")+'</th>'+mAbbr.map(function(m){return '<th>'+m+'</th>';}).join("")+'<th class="mx-tot">'+t("cov_total")+'</th>';
   var rows=b.wards.map(function(w){
@@ -1440,10 +1453,10 @@ function dashChart(){
     for(var mi=0;mi<12;mi++){ var on=cover[w]&&cover[w][mi]; cells+=`<td><span class="mx-dot ${on?('on '+cls):''}"></span></td>`; }
     var totCell;
     if(roundType==="grand"){
-      var ac=grandRecs.filter(function(a){return a.w===w && String(a.d).slice(0,4)===dashYear;}).length;
+      var ac=grandRecs.filter(function(a){return a.w===w && yearOf(a.d)===dashYear;}).length;
       totCell=`<td class="mx-tot">${ac||"–"}</td>`;
     }else{
-      var all=items.filter(function(x){return wardBase(x.wad)===w && String(x.tarikh).slice(0,4)===dashYear;}).length;
+      var all=items.filter(function(x){return wardBase(x.wad)===w && yearOf(x.tarikh)===dashYear;}).length;
       totCell=all?`<td class="mx-tot"><b>${all}</b></td>`:`<td class="mx-tot">–</td>`;
     }
     return `<tr><td class="mx-loc" title="${esc(w)}">${esc(w)}</td>${cells}${totCell}</tr>`;

@@ -1665,7 +1665,8 @@ function renderList(){
   if(curWard)filtered=filtered.filter(x=>wardBase(x.wad)===curWard);
   const body=filtered.length?`<div class="list">${filtered.map(cardHTML).join("")}</div>`
     :`<div class="empty"><div class="ic">📋</div><p>${t("empty_view")}</p></div>`;
-  content.innerHTML=`<div class="view-title">${t("list_title")}</div><div class="toolbar">${statusSel}${bldSel}${wardSel}<button class="btn-report" onclick="exportReport()">${t("btn_report")}</button></div>${body}`;
+  const reportBtn = isUKI ? `<button class="btn-report" onclick="exportReport()">${t("btn_report")}</button>` : "";
+  content.innerHTML=`<div class="view-title">${t("list_title")}</div><div class="toolbar">${statusSel}${bldSel}${wardSel}${reportBtn}</div>${body}`;
 }
 function setListBld(id){ listBld=id; curWard=""; render(); }
 function applyWard(){curWard=document.getElementById("fWard").value;render();}

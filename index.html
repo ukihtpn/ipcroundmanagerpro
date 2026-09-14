@@ -751,6 +751,20 @@ const OVERDUE_DAYS = 3;
 const DEMO = !CONFIG.GAS_URL;
 
 let lang="en"; try{const sv=localStorage.getItem("ipc_lang"); if(sv)lang=sv;}catch(e){}
+// Some checklist items (Forensik & Mortuari) are authored as "BM  |  EN" in one string
+// so the sheet/report keep both languages on record — but the on-screen checklist should
+// only show whichever language the EN/BM toggle is set to, not both at once.
+function splitBilingualItem(raw){
+  if(typeof raw!=="string") return null;
+  var i=raw.indexOf("  |  ");
+  if(i<0) return null;
+  return {bm:raw.slice(0,i), en:raw.slice(i+5)};
+}
+function itemText(raw, langCode){
+  var s=splitBilingualItem(raw);
+  if(!s) return raw;
+  return (langCode||lang)==="ms" ? s.bm : s.en;
+}
 const I18N={
  en:{login_sub:"IPC Findings Monitoring System",lab_user:"Username",lab_pass:"Password",remember_me:"Remember me",btn_login:"Log In",
    badge_monitor:"IPC · Monitor",sub_monitor:"Monitor Dashboard",ward:"Ward",logout:"Log Out",hdr_unit_line:"Infection Prevention & Control Unit",
@@ -1368,7 +1382,7 @@ function renderGrandSec(){
   const rows=g.i.map(function(txt,ii){
     const d=gDraft[ii]||{};
     return `<div class="aud-item">
-      <div class="aud-q">${esc(txt)}</div>
+      <div class="aud-q">${esc(itemText(txt))}</div>
       <div class="aud-sel"><select onchange="gSecSet(${ii},this.value)">
         <option value="">—</option><option value="Y"${d.v==='Y'?' selected':''}>Y</option><option value="N"${d.v==='N'?' selected':''}>N</option><option value="P"${d.v==='P'?' selected':''}>P</option><option value="NA"${d.v==='NA'?' selected':''}>NA</option></select></div>
       ${findingsBlock(ii)}</div>`;
@@ -1569,8 +1583,8 @@ function buildAuditReportHTML(o){
   var negRows=negs.length?negs.map(function(x,i){
     var imgs=(x.photos||[]).map(function(u){return '<img src="'+esc(u)+'" referrerpolicy="no-referrer">';}).join("");
     return `<tr><td class="cno">${i+1}</td>
-      <td contenteditable="true"><div class="fmeta">${esc(x.sec)} &middot; ${esc(x.grp)}</div><div class="ftxt">${esc(x.text)}</div>${x.note?'<div class="fresp"><b>Note:</b> '+esc(x.note)+'</div>':''}${imgs?'<div class="imgs">'+imgs+'</div>':''}</td>
-      <td class="crec" contenteditable="true">${esc(auditRec(x.text))}</td></tr>`;
+      <td contenteditable="true"><div class="fmeta">${esc(x.sec)} &middot; ${esc(x.grp)}</div><div class="ftxt">${esc(itemText(x.text,RL))}</div>${x.note?'<div class="fresp"><b>Note:</b> '+esc(x.note)+'</div>':''}${imgs?'<div class="imgs">'+imgs+'</div>':''}</td>
+      <td class="crec" contenteditable="true">${esc(auditRec(itemText(x.text,RL)))}</td></tr>`;
   }).join(""):`<tr><td colspan="3" style="text-align:center;color:#137a41;padding:16px">${t("aud_all_compliant")}</td></tr>`;
   var comp=(o.secs||[]).reduce(function(a,s){return a+(s.y||0);},0);
   var applicable=(o.secs||[]).reduce(function(a,s){return a+(s.y||0)+(s.n||0);},0);

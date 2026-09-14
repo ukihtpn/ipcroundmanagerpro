@@ -212,11 +212,6 @@ html{color-scheme:light}
 .leg-dot.good{background:#137a41}.leg-dot.sat{background:#c99700}.leg-dot.low{background:#d9531e}
 .howto-img{width:100%;border-radius:10px;border:1px solid var(--line);cursor:zoom-in;display:block}
 .lightbox{display:none;position:fixed;inset:0;background:rgba(0,0,0,.92);z-index:99999;align-items:center;justify-content:center;padding:14px;overflow:auto}
-.report-ov{display:none;position:fixed;inset:0;background:#fff;z-index:99999;flex-direction:column}
-.ro-bar{background:#137a41;padding:8px 12px;display:flex;justify-content:space-between;align-items:center;gap:8px}
-.ro-nt{background:rgba(255,255,255,.2);color:#fff;border:none;padding:8px 14px;border-radius:8px;font-size:13px;font-weight:700;cursor:pointer}
-.ro-close{background:rgba(255,255,255,.2);color:#fff;border:none;width:34px;height:34px;border-radius:50%;font-size:17px;font-weight:800;cursor:pointer}
-.report-ov iframe{flex:1;width:100%;border:none}
 .lightbox img{max-width:100%;height:auto;border-radius:8px;background:#fff}
 .lb-close{position:fixed;top:14px;right:18px;width:40px;height:40px;border-radius:50%;background:rgba(255,255,255,.15);color:#fff;font-size:22px;font-weight:700;display:flex;align-items:center;justify-content:center;cursor:pointer;z-index:100000}
 .empty{text-align:center;padding:50px 20px;color:var(--muted)}
@@ -332,14 +327,6 @@ html{color-scheme:light}
 .gfind-h{display:flex;justify-content:space-between;align-items:center;font-size:12px;margin-bottom:6px;color:var(--ink)}
 .gfind-rm{background:none;border:none;color:#d9531e;font-weight:800;cursor:pointer;font-size:14px}
 .gfind textarea{width:100%;min-height:48px;border:1px solid var(--line);border-radius:8px;padding:8px;font-family:inherit;font-size:13px;resize:vertical}
-.aud-others{display:flex;flex-wrap:wrap;gap:5px;margin:4px 0 2px}
-.ao-chip{background:#eef1f0;border:1px solid #dde3e0;border-radius:12px;padding:3px 9px;font-size:11.5px;color:#33413a}
-.gfind-loc{font-size:12px;color:#0f6035;font-weight:700;margin:2px 0}
-.gfind-locin{width:100%;padding:8px;border:1px solid var(--line);border-radius:7px;font-size:13px;margin-bottom:6px}
-.gfind-other{background:#f4f6f8;border:1px solid #dfe4e8}
-.gfind-ro{font-size:11px;color:#8a95a0;font-weight:700;margin-left:auto}
-.gfind-otx{font-size:13px;color:#333;white-space:pre-wrap;margin:4px 0}
-.gfind-add.opt{background:#eef6f0;color:#0f6035;border:1px dashed #9fd6b4}
 .gfind-add{background:#eef6f0;border:1px dashed var(--teal);color:var(--teal);font-weight:700;border-radius:8px;padding:9px;width:100%;cursor:pointer;font-size:12.5px;margin-top:2px}
 .photo-btns{display:flex;gap:8px;flex-wrap:wrap}
 .pbtn{flex:1;min-width:130px;display:flex;align-items:center;justify-content:center;gap:6px;padding:12px;border:1.5px dashed var(--teal);border-radius:10px;color:var(--teal);font-weight:700;font-size:13.5px;cursor:pointer;background:#f2faf5}
@@ -393,19 +380,6 @@ html{color-scheme:light}
 .rec-box p{font-size:13px;line-height:1.55;color:var(--ink);margin:0}
 .btn-report{padding:9px 13px;border:1px solid var(--teal);background:var(--teal);color:#fff;font-weight:700;border-radius:9px;cursor:pointer;font-size:13px;white-space:nowrap}
 .btn-report:hover{background:var(--teal-d)}
-.og-wrap{background:#fff7ea;border:1px solid #f0dca8;border-radius:12px;padding:11px;margin-bottom:14px}
-.og-h2{font-weight:800;font-size:14px;color:var(--ink);margin:6px 2px 8px}
-.drive-row{display:flex;gap:6px;margin-top:8px}
-.drive-in{flex:1;padding:8px 10px;border:1px solid var(--line);border-radius:7px;font-size:12px}
-.drive-save{background:#1a6fc4;color:#fff;border:none;border-radius:7px;padding:8px 12px;font-weight:700;font-size:12px;cursor:pointer}
-.og-empty{font-size:12.5px;color:var(--muted);padding:8px 2px}
-.others-note{font-size:11.5px;color:#8a6608;font-weight:700;margin:2px 0 4px}
-.og-h{font-weight:800;font-size:13px;color:#8a6608;margin-bottom:8px}
-.og-card{display:flex;align-items:center;gap:8px;background:#fff;border:1px solid var(--line);border-radius:10px;padding:9px 11px;margin-bottom:7px}
-.og-tx{flex:1;font-size:12.5px;line-height:1.4}.og-tx span{color:var(--muted)}
-.og-btns{display:flex;gap:6px}
-.og-ed{background:#eef6f0;border:1px solid #bfe0cc;color:#0f6035;font-weight:700;border-radius:8px;padding:7px 10px;font-size:12px;cursor:pointer}
-.og-del{background:#fdecea;border:1px solid #f0b3a8;color:#c0341a;font-weight:800;border-radius:8px;padding:7px 10px;font-size:13px;cursor:pointer}
 .ref-list{display:flex;flex-direction:column;gap:10px}
 .ref-item{display:flex;align-items:stretch;background:var(--card);border:1px solid var(--line);border-radius:12px;box-shadow:var(--shadow);overflow:hidden}
 .ref-link{flex:1;display:flex;align-items:center;gap:12px;padding:13px 14px;text-decoration:none;color:inherit;min-width:0}
@@ -740,6 +714,36 @@ const AUDIT = [
      "General bin with cover available"]}
  ]}
 ];
+const AUDIT_MORTUARY = [
+  { s:"Seksyen 1 — Pentadbiran & Standard Precaution (Forensik & Mortuari)", g:[
+   { n:"A. Polisi Pentadbiran, Latihan & Kesihatan Pekerjaan", i:["SOP/polisi kawalan infeksi KKM yang terkini tersedia dan boleh diakses oleh semua kakitangan forensik/mortuari.  |  Current MOH infection control SOPs/policies are accessible to all forensic/mortuary staff.", "Program orientasi dan latihan berterusan mengenai biosafety, standard precautions dan pengurusan tumpahan disediakan untuk kakitangan baru.  |  Ongoing orientation/training on biosafety, standard precautions and spill management is provided for new staff.", "Rekod imunisasi kakitangan (terutamanya status vaksinasi Hepatitis B) diselenggara dan terkini.  |  Staff immunisation records (esp. Hepatitis B vaccination status) are maintained and current.", "Protokol post-exposure prophylaxis (PEP) dan laluan pelaporan kejadian tercucuk jarum/tumpahan cecair badan jelas dan berfungsi.  |  A functional PEP protocol and reporting pathway for needlestick/body-fluid exposure incidents is in place.", "Bekalan yang diperlukan untuk mematuhi Standard Precautions (produk kebersihan tangan, PPE, peralatan suntikan) sentiasa mencukupi.  |  Supplies necessary for adherence to Standard Precautions are readily available.", "Terdapat sistem pemantauan bekalan untuk memastikan keperluan Standard Precautions dipatuhi.  |  A monitoring system ensures adequate supplies for Standard Precautions.", "SOP/Polisi pengurusan mayat berisiko tinggi tersedia dan boleh diakses oleh semua kakitangan forensik/mortuari (termasuk proses rujukan ke autopsi BSL 3/4, jika berkenaan).  |  There is a current SOP/policy for management of high-risk bodies, accessible to all forensic/mortuary staff (include referral process to BSL 3/4 autopsy, if applicable)."]},
+   { n:"B. Kebersihan Tangan", i:["Bekalan mencukupi (sabun, air, tuala kertas, hand rub berasaskan alkohol) tersedia dan mudah diakses di kawasan kerja forensik.  |  Adequate hand hygiene supplies are available and accessible in forensic work areas.", "Kakitangan dilatih mengenai indikasi mencuci tangan dengan sabun & air berbanding hand rub berasaskan alkohol.  |  Staff are trained on indications for soap-and-water vs alcohol-based hand rub.", "Audit kebersihan tangan dijalankan secara berkala dan maklum balas prestasi diberikan kepada kakitangan.  |  Hand hygiene compliance is periodically audited with feedback given to staff.", "'5 Moments of Hand Hygiene' dipraktikkan dengan betul semasa mengendalikan mayat/spesimen.  |  The '5 Moments of Hand Hygiene' are correctly practised when handling bodies/specimens."]},
+   { n:"C. Alat Perlindungan Diri / PPE (termasuk langkah tambahan autopsi berisiko tinggi)", i:["PPE mencukupi dan bersesuaian (gaun/apron kalis air, but/kasut getah, pelindung muka & mata, mask N95) sedia digunakan.  |  Sufficient and appropriate PPE (waterproof gown/apron, rubber boots, face/eye protection, N95 mask) is available.", "Kakitangan mengamalkan 'double-gloving' (sarung tangan tahan hiris + sarung tangan nitril luar) semasa autopsi berisiko tinggi.  |  Staff practise double-gloving (cut-resistant inner + outer nitrile glove) during high-risk autopsies.", "Urutan 'donning & doffing' PPE yang betul dipatuhi di zon peralihan khas (elak pencemaran ke koridor bersih).  |  Correct PPE donning/doffing sequence is followed in designated transition zones.", "PPE ditanggalkan dan dibuang sebelum meninggalkan bilik autopsi/kawasan penjagaan.  |  PPE is removed and discarded before leaving the autopsy room/care area.", "Kebersihan tangan dilakukan sejurus selepas menanggalkan PPE.  |  Hand hygiene is performed immediately after PPE removal.", "Mayat dari wad pengasingan/disyaki agen berjangkit tinggi dimasukkan ke dalam beg mayat kalis bocor sebelum dipindahkan.  |  Bodies from isolation wards/suspected high-consequence infection are sealed in leak-proof body bags before transfer.", "Kawalan kejuruteraan: alat berkelajuan rendah digunakan untuk kurangkan bioaerosol semasa memotong tulang.  |  Engineering controls: low-speed tools are used to minimise bioaerosols during bone cutting.", "Pemprosesan organ/viscera berongga dilakukan dengan berhati-hati di bawah kawalan pencemaran untuk kurangkan percikan.  |  Processing of hollow organs/viscera is done carefully under containment to reduce splatter."]},
+   { n:"D. Kebersihan Respiratori / Langkah Tambahan Autopsi Berisiko", i:["Bagi kes disyaki/disahkan penyakit berjangkit respiratori serius (cth: MERS-CoV, TB), langkah pencegahan tambahan (airborne/droplet) dipatuhi semasa autopsi.  |  For suspected/confirmed serious respiratory infectious cases, additional airborne/droplet precautions are followed during autopsy."]},
+   { n:"E. Pengurusan Sampel Biologi", i:["Pengurusan sampel biologi (darah, tisu, swab, cecair badan) untuk tujuan makmal/patologi dilaksanakan mengikut prosedur yang ditetapkan (pelabelan, pembungkusan kalis bocor, storan & pengangkutan selamat) - bagi kes biasa mahupun kes berisiko tinggi.  |  Management of biological samples (blood, tissue, swabs, body fluids) for laboratory/pathology purposes follows established procedures (labelling, leak-proof packaging, safe storage & transport) - for both normal and high-risk cases."]},
+   { n:"F. Pembersihan Persekitaran", i:["Prosedur pembersihan dipantau secara berkala bagi memastikan ia dilaksanakan dengan betul dan konsisten.  |  Cleaning procedures are periodically monitored to ensure correct, consistent performance.", "Kit/peralatan pengurusan tumpahan (spillage) dan disinfektan mudah diperoleh dan dipantau.  |  Spillage management kits/equipment and disinfectant are readily available and monitored.", "Permukaan persekitaran dibersih dan didisinfeksi dengan disinfektan diluluskan KKM mengikut jadual. Bilik autopsi dibersih & didisinfeksi selepas setiap kes autopsi, dan juga pencucian end-of-day.  |  Environmental surfaces are cleaned and disinfected with MOH-approved disinfectant per cleaning schedule. Autopsy room is cleaned & disinfected after each autopsy case and at End-Of-Day.", "Pembersih dan disinfektan digunakan mengikut arahan pengilang (pencairan, contact time, jangka hayat).  |  Cleaners/disinfectants are used per manufacturer instructions (dilution, contact time, shelf-life).", "Semburan air bertekanan tinggi dielakkan semasa pembersihan bilik post-mortem untuk elak percikan.  |  High-pressure water spraying is avoided during post-mortem room cleaning to prevent splashing.", "Cleaner arif dan patuh sistem kod warna mop/kain lap/baldi ikut zon (bersih / separa terhad / terhad-tercemar).  |  Cleaner is aware of and follows the colour-coded mop/cloth/bucket system by zone.", "Cleaner tahu kepekatan (dilution) disinfektan yang betul mengikut jenis/kawasan kerja.  |  Cleaner knows the correct disinfectant dilution for the type/area of work.", "Cleaner tahu dan patuh tempoh 'contact time' disinfektan sebelum permukaan dilap kering atau digunakan semula.  |  Cleaner knows and follows the disinfectant contact time before surfaces are dried or returned to use.", "Cleaner memakai PPE bersesuaian (sarung tangan, apron/gaun kalis air, mask jika perlu) sepanjang proses pembersihan.  |  Cleaner wears appropriate PPE throughout the cleaning process.", "Cleaner tahu langkah tindakan dan laluan pelaporan sekiranya berlaku tumpahan darah/cecair badan semasa membersih.  |  Cleaner knows the response steps and reporting pathway for blood/body-fluid spills encountered while cleaning."]},
+   { n:"G. Peralatan Penjagaan Mayat", i:["Wujud senarai/registry yang menyenaraikan semua peralatan/instrumen boleh guna semula (reusable) yang digunakan di unit ini.  |  There is a registry listing all reusable instruments/equipment used in this forensic/mortuary unit.", "Wujud SOP bertulis untuk pembersihan & pemprosesan semula (reprocessing) bagi semua peralatan/instrumen boleh guna semula.  |  There is a written SOP for cleaning & reprocessing of all reusable instruments/devices.", "Peralatan boleh guna semula dibersih dan diproses semula (disinfeksi/pensterilan) mengikut arahan pengilang.  |  Reusable equipment is cleaned and reprocessed (disinfected/sterilised) per manufacturer instructions.", "Peranti pakai buang (single-use) dilupuskan sejurus digunakan dan tidak digunakan semula.  |  Single-use devices are discarded immediately after use and not reused.", "Peralatan/troli disimpan dengan cara yang melindungi daripada kerosakan dan pencemaran.  |  Equipment/trolleys are stored in a manner that protects against damage and contamination.", "Peralatan/instrumen direndam dalam larutan disinfektan/enzimatik dengan kepekatan dan tempoh rendaman yang betul mengikut arahan pengilang, sebelum proses pembersihan/pensterilan seterusnya.  |  Instruments/equipment are soaked in disinfectant/enzymatic solution at the correct concentration and immersion time, before further cleaning/sterilisation.", "Bekas rendaman (soaking container) sentiasa berpenutup, berlabel (nama larutan & tarikh/masa disediakan) dan diletakkan di kawasan kerja kotor.  |  The soaking container is always covered, labelled and kept in the dirty work area.", "Larutan rendaman ditukar mengikut jadual/kekerapan yang ditetapkan atau sebaik sahaja jelas kotor/keruh.  |  Soaking solution is changed per the set schedule/frequency or as soon as it becomes visibly soiled.", "Peralatan dibilas dengan air bersih selepas rendaman sebelum proses seterusnya (pengeringan/pensterilan/penyimpanan).  |  Equipment is rinsed with clean water after soaking before further processing.", "Larutan rendaman terpakai dilupuskan mengikut prosedur sisa berjadual (neutralisasi dahulu jika berkenaan).  |  Used soaking solution is disposed of per scheduled-waste procedure (neutralised first if applicable).", "PPE bersesuaian digunakan semasa proses reprocessing peralatan reusable di kawasan dekontaminasi/CSSD unit.  |  Appropriate PPE is used if reusable instruments are being reprocessed at the department/decontamination area."]},
+   { n:"H. Linen & Pembalut Mayat", i:["Linen/kain pembalut mayat yang bersih mencukupi dan disimpan dalam almari bersih dan kering.  |  Clean linen/body-wrapping cloth is adequate and stored in a clean, dry cupboard.", "Linen/kain kotor atau tercemar dikumpul mengikut jadual menggunakan troli dan laluan yang bersesuaian.  |  Soiled/contaminated linen is collected on schedule using appropriate trolley and route.", "Beg linen tidak diisi melebihi ¾ penuh.  |  Linen bags are not filled beyond ¾ full.", "Pembalut/body bag pakai buang yang digunakan adalah kalis bocor dan bersaiz sesuai; dilupuskan sejurus selepas digunakan dan TIDAK digunakan semula untuk mayat lain.  |  The disposable body bag/shroud used is leak-proof and appropriately sized; discarded immediately after use and NOT reused."]},
+   { n:"I. Keselamatan Suntikan & Benda Tajam", i:["Wujud polisi/SOP keselamatan suntikan & benda tajam yang berkuatkuasa dan diketahui oleh semua kakitangan yang menjalankan prosedur bersampel (post-mortem blood, vitreous, urine, embalming).  |  There is an enforced sharps/injection safety policy or SOP, known to all staff performing sampling procedures.", "Semua peralatan tajam (skalpel, jarum) dilupuskan segera ke dalam bekas kalis tikam (sharp bin) yang berada dalam jangkauan segera.  |  All sharps (scalpels, needles) are disposed of immediately into a puncture-resistant sharps container within immediate reach.", "Sharp bin tidak diisi melebihi ¾ penuh dan tidak ditutup semula/dipotong secara manual.  |  Sharps bins are not filled beyond ¾ full and are never recapped or manually broken.", "Bekas sharp bin yang penuh dilupuskan mengikut peraturan sisa perubatan berjadual.  |  Filled sharps containers are disposed of per regulated medical waste rules."]},
+   { n:"J. Pengurusan Sisa Klinikal", i:["Sisa diuruskan mengikut polisi sisa berjadual KKM (segregasi biohazard/anatomi/patologi).  |  Waste is managed per MOH scheduled-waste policy (biohazard/anatomical/pathological segregation).", "Disinfektan tervalidasi (cth: hipoklorit kepekatan betul) digunakan dengan contact time yang betul bagi tumpahan darah/cecair badan.  |  Validated disinfectant is used with correct contact time for blood/body-fluid spills.", "Tong sisa klinikal jenis pedal kaki disediakan dan dibersihkan/ditukar secara berkala.  |  Foot-pedal-operated clinical waste bins are provided and regularly cleaned/exchanged.", "Sisa klinikal yang dibawa antara fasiliti diletakkan dalam bekas bersesuaian (cth: kotak berkunci).  |  Clinical waste transported between facilities is placed in an appropriate container."]}
+ ]},
+  { s:"Seksyen 2 — Persekitaran & Fasiliti (Forensik & Mortuari)", g:[
+   { n:"A. Zonasi Fasiliti", i:["Pengzonan fizikal jelas: kawasan bersih (pejabat/admin), separa terhad (koridor/bilik persalinan) dan terhad/tercemar (bilik autopsi).  |  Clear physical zoning exists between clean, semi-restricted and restricted/contaminated areas."]},
+   { n:"B. Bilik Autopsi - Tekanan Negatif", i:["Bilik autopsi dikekalkan bertekanan negatif berbanding kawasan bersebelahan (bagi kes berisiko aerosol, cth: TB).  |  The autopsy suite maintains negative pressure relative to adjacent areas (for aerosol-risk cases).", "Pintu bilik autopsi (dari bilik-bilik bersebelahan) sentiasa tertutup rapat dan bersegel.  |  Doors to the autopsy room (from adjacent rooms) remain sealed & closed.", "Pengudaraan yang baik dan penapis HEPA disediakan di bilik autopsi yang mengendalikan kes airborne/berisiko tinggi.  |  There is good ventilation & HEPA filter in autopsy rooms handling airborne/high-risk cases.", "(Jika digunakan) Sebarang alat penulen udara tambahan (air purifier) telah disahkan oleh jabatan kejuruteraan, menjalani PPM berkala dan sentiasa bersih.  |  (If used) Any adjuvant air purifier is approved by engineering, undergoes regular PPM and is clean."]},
+   { n:"C. Lantai, Dinding & Pintu", i:["Lantai dan dinding diperbuat/disalut bahan tidak telap (cth: polyurethane/epoxy) yang tahan disinfeksi kerap.  |  Floors and walls are made of/coated with impervious material tolerant of frequent disinfection.", "Lantai bebas daripada serpihan dan sampah.  |  Floor is free from debris & rubbish.", "Dinding dan pintu bersih, bebas daripada kesan darah, kotoran, habuk atau kulat.  |  Wall & doors are clean and free from blood stains, dirt, dust or mould."]},
+   { n:"D. Permukaan", i:["Semua worktop dan permukaan kerja tersusun kemas, bersih dan bebas habuk.  |  All worktops & work surfaces are not scattered, are clean and free of dust.", "Semua permukaan termasuk bahagian atas lampu pendant bebas daripada habuk dan kesan darah.  |  All surfaces, including above pendant lamps, are free of dust and blood stains.", "Kabinet atau laci penyimpanan peralatan autopsi bersih dan bebas habuk.  |  Cabinets or drawers storing autopsy equipment are clean & free of dust."]},
+   { n:"E. Sink Kebersihan Tangan", i:["Sink kebersihan tangan tersedia dan dilengkapi bekalan sesuai (air bersih mengalir, sabun, dan tuala tangan pakai buang).  |  Sinks for hand hygiene are available and appropriately supplied with running clean water, soap and disposable hand towel."]},
+   { n:"F. Saliran", i:["Sistem saliran/perangkap lantai diselenggara untuk elak aliran balik, bau dan penyumbatan organik.  |  Drainage/floor traps are maintained to prevent backflow, odour and organic blockage."]},
+   { n:"G. Siling & Pengudaraan", i:["Pengudaraan mencukupi dan dikekalkan, dengan termometer bilik disediakan.  |  Ventilation is adequate and maintained, with a room thermometer available.", "Siling bebas daripada sesawang atau kulat.  |  There are no cobwebs or mould on the ceiling.", "(Jika digunakan) Unit penghawa dingin bersih, bebas habuk, dan telah menjalani PPM.  |  (If used) Any air-conditioning units are clean and free of dust, and have undergone PPM."]},
+   { n:"H. Chiller / Bilik Simpan Mayat", i:["Chiller/freezer simpanan mayat dikekalkan pada suhu optimum (2°C-4°C) dengan log suhu harian direkod.  |  Body-holding chillers/freezers are maintained at 2-4°C with documented daily temperature logs.", "Chiller/peti sejuk simpanan mayat bersih (tiada kesan darah).  |  The body-holding chiller/fridge is clean (no blood stains)."]},
+   { n:"I. Ruang Pekerja", i:["Ruang pekerja (bilik persalinan, pantri, bilik rehat) bersih dan diasingkan dengan jelas daripada bilik autopsi/kawasan simpanan mayat.  |  Staff areas (changing room, pantry, rest room) are clean and clearly separated from the autopsy room/body-holding area.", "PPE tercemar TIDAK dibawa masuk ke ruang pekerja/pantri - ditanggalkan dan dilupuskan/dibersih sebelum kakitangan masuk ke zon bersih.  |  Contaminated PPE is NOT brought into staff areas/pantry - it is removed and discarded/cleaned before staff enter the clean zone.", "Tiada spesimen/sampel biologi disimpan di dalam peti sejuk makanan kakitangan - peti sejuk makanan diasingkan sepenuhnya daripada storan spesimen.  |  No biological specimens/samples are stored in the staff food refrigerator - the staff food fridge is fully separated from specimen storage."]}
+ ]}
+];
+
+// Wards that use the Forensik & Mortuari checklist instead of the general one
+const MORTUARY_WARDS = ["Mortuary", "Mortuary (WCC)"];
+function isMortuaryWard(w){ return MORTUARY_WARDS.indexOf(w) >= 0; }
+function curAudit(){ return isMortuaryWard(auditWard) ? AUDIT_MORTUARY : AUDIT; }
 function auditKey(si,gi,ii){return "s"+si+"g"+gi+"i"+ii;}
 function auditPerf(pct){ if(pct>=90)return {en:"Good",ms:"Baik",cls:"good"}; if(pct>=70)return {en:"Satisfactory",ms:"Memuaskan",cls:"sat"}; return {en:"Needs Improvement",ms:"Perlu Penambahbaikan",cls:"low"}; }
 const STATUS_LABEL = {Baru:"Pending", Dijawab:"Answered", Selesai:"Resolved"};
@@ -758,7 +762,7 @@ const I18N={
    list_title:"Findings List",f_all_status:"All Status",f_pending:"Pending",f_answered_verify:"Answered (to verify)",f_answered:"Answered",f_resolved:"Resolved",f_all_wards:"All Wards",f_all_bld:"All Buildings",empty_view:"No findings for this view.",btn_report:"📄 Report",t_report_empty:"No findings to include in the report.",
    st_Baru:"Pending",st_Dijawab:"Answered",st_Selesai:"Resolved",urgent:"Needs urgent action",
    lab_ward_action:"Ward Action",lab_ipc_feedback:"IPC — Feedback / Request",lab_ipc_verified:"IPC — Verified",by_word:"By",
-   btn_respond:"Respond & Upload Evidence",btn_resolve:"Mark Resolved",btn_request:"Request Further Action",btn_reopen:"Reopen",btn_delete:"Delete",confirm_delete:"Delete this finding permanently? It will be removed from the sheet.",t_deleted:"Finding deleted.",btn_edit:"Edit",edit_title:"Edit Finding",btn_save_edit:"Save Changes",t_saved_edit:"Finding updated.",bld_main:"Main Block",bld_wcc:"WCC (Women & Children)",l_building:"Building",pick_building_first:"Select a building, then a ward, to continue.",change:"change",no_findings:"No findings",back_buildings:"Buildings",tap_building_hint:"Tap a building to see its wards.",wards_word:"wards",findings_word:"findings",all_clear:"All clear",staff_pick_title:"Who's on the round?",staff_pick_sub:"Select your name — it will be recorded with the findings you add.",by_word:"by",l_zone:"Zone (Emergency)",take_photo:"Take Photo",from_gallery:"From Gallery",l_round_type:"Round type",grand_start_hint:"Grand round uses the full IPC audit checklist (Y/N/NA + scoring).",grand_start_btn:"Start Grand Round Audit",day_added:"Findings added",day_first:"Add first finding",day_add_another:"Add another finding (same ward)",day_suggest:"Suggest",day_no_suggest:"No suggestion for this category — type manually.",day_rec_hint:"type manually or tap Generate",day_add_btn:"Add finding to session",day_save_all:"Save all & finish",day_added_one:"Finding added to session.",day_saving:"Saving all findings…",day_saved:"{n} finding(s) saved.",day_failed:"failed",day_need_finding:"Please write the finding first.",day_editing:"Editing finding — update and tap Add again.",l_timeact:"Time to act",act_now:"Immediately",act_3:"Within 3 days",act_7:"Within 7 days",rec_ai:"AI Generate",rec_manual:"Manual",rem_wards:"Wards with pending findings",bkt_title:"pending Daily IPC findings",bkt_im:"Immediate",bkt_w3:"Within 3 days",bkt_w7:"Within 7 days",bkt_nv:"Need verify",bkt_title2:"Pending Daily IPC findings by time-to-act",exc_title:"Wards past reply deadline",exc_wards:"Wards",bkt_tap:"Tap a box to see which wards",rem_pick_ward:"Select ward",bkt_none:"No wards in this group",grand_title:"Grand IPC Round",grand_pick_dr:"Select the UKI Doctor in-charge for this round:",grand_incharge:"Dr in-charge",grand_open:"Open - tap to take",grand_summary:"Progress summary",grand_progress:"Sections completed",grand_refresh:"Refresh progress",grand_refreshed:"Updated.",grand_st_none:"Not started",grand_st_prog:"In progress",grand_st_done:"Done",grand_dr_only:"Only the Dr in-charge can generate the final report:",grand_none_yet:"No sections claimed yet.",grand_back_secs:"Sections",grand_mark_done:"Mark section complete",grand_save_prog:"Save progress",grand_sec_done:"Section marked complete.",grand_sec_saved:"Progress saved.",grand_finalize:"Finalize and Generate Report",grand_partial:"Partial",grand_finding:"Finding",grand_add_finding:"Add another finding / photo",grand_add_remark:"Add remark / photo (optional)",grand_remark:"Remark",grand_remark_ph:"Optional remark / note…",grand_pick_next:"Pick another section below, or Finalize when done.",grand_sync_fail:"Sync failed — please re-open the section and save again.",grand_readonly:"read-only",you_word:"you",grand_findings_word:"findings",grand_loc_ph:"Location of finding (e.g. Bed 3, sluice room)",grand_others_found:"Findings already recorded by others (read-only) — avoid duplicates:",grand_no_report:"No report yet (ongoing)",grand_has_report:"Report generated (finalized)",grand_none_ongoing:"None ongoing.",grand_reedit:"Edit / Re-finalize",drive_open:"Open Drive report",drive_ph:"Paste Google Drive link…",drive_save:"Save link",drive_saved:"Drive link saved.",grand_sections_done:"Sections complete",grand_items_answered:"Items answered",report_newtab:"Open in new tab",report_del:"Delete this report",report_del_confirm:"Delete this report for {ward}? This cannot be undone.",report_del_done:"Report deleted.",grand_del:"Delete this session (test)",grand_manage:"Ongoing / incomplete sessions",edit_word:"Edit",grand_del_confirm:"Delete this grand round session? This cannot be undone.",grand_del_done:"Session deleted.",grand_save_note:"Tip: each section is saved as you go. The final report appears in the Audits sheet only after the Dr in-charge taps Finalize.",btn_wa:"WhatsApp Reminder",info_rounds_h:"Daily vs Grand IPC Round",info_daily_p:"Quick ward rounds where you log individual IPC findings (one issue at a time) with photo and recommendation. Wards respond with evidence; you verify and resolve. Stored in the Findings sheet.",info_grand_p:"A full structured IPC audit using the MOH Infection Control Audit Tool (Section 1 Administrative & Standard Precaution, Section 2 Environmental Survey). Each component is scored Y/P/N/NA, sections can be shared among staff, and a compliance report is produced. Stored in the Audits sheet.",info_score_h:"Grand Round Scoring System",info_score_p:"Each item is answered Yes, Partial, No, or Not Applicable.",info_excluded:"excluded",info_score_formula:"Compliance % = (Yes + 0.5×Partial) ÷ (Yes + Partial + No) × 100. NA items are excluded from the total.",perf_good:"Good",perf_sat:"Satisfactory",perf_low:"Needs Improvement",info_howto_h:"How to Use (Ward Guide)",info_howto_tap:"Tap the image to enlarge.",grand_rem_title:"Grand IPC round(s) to complete",grand_rem_sub:"Tap a location below to resume and finish the audit.",grand_rem_none:"No Grand rounds pending",grand_rem_none_sub:"All started Grand IPC rounds are finalized.",round_daily:"Daily IPC Round",round_grand:"Grand IPC Round",round_daily_note:"Daily round — log individual findings by ward.",cov_title_daily:"Daily IPC coverage",cov_title_grand:"Grand IPC round coverage",cov_location:"Location",cov_done:"Done",cov_pending:"Not yet",cov_total:"Total",cov_resolved:"Resolved",cov_total_hint:"total findings this year",cov_grand_empty:"No Grand IPC rounds saved yet for this year. Do a Grand round from the Dashboard and tap Save Audit (needs the latest Code.gs deployed).",round_grand_note:"Grand round — full IPC audit checklist with Y/N/NA scoring.",audit_title:"Grand IPC Round — Audit",aud_yes:"Yes",aud_no:"No",aud_na:"N/A",aud_neg:"non-compliant",aud_compliance:"Compliance",aud_no_answer:"Answer items to see the compliance score",aud_finding_ph:"Describe the non-compliant finding…",aud_add_photo:"Add photo",aud_gen_report:"Generate Audit Report",aud_save:"Save Audit",aud_answer_first:"Answer at least one Y/N item first.",aud_all_compliant:"All applicable items compliant — no negative findings. ✅",aud_saving:"Saving audit…",aud_saved:"Audit saved.",aud_popup:"Please allow pop-ups to open the report.",aud_audited:"Audited",aud_not_audited:"Not audited",aud_audited_n:"audited",aud_avg:"Avg",aud_none:"No audits",aud_view_report:"View / Print Report",aud_none_yet:"No audits saved yet. Do a Grand IPC Round from the Dashboard.",aud_list_hint:"Saved audit reports (separate from Daily findings).",aud_report_drive:"Full report saved in Drive — please search:",
+   btn_respond:"Respond & Upload Evidence",btn_resolve:"Mark Resolved",btn_request:"Request Further Action",btn_reopen:"Reopen",btn_delete:"Delete",confirm_delete:"Delete this finding permanently? It will be removed from the sheet.",t_deleted:"Finding deleted.",btn_edit:"Edit",edit_title:"Edit Finding",btn_save_edit:"Save Changes",t_saved_edit:"Finding updated.",bld_main:"Main Block",bld_wcc:"WCC (Women & Children)",l_building:"Building",pick_building_first:"Select a building, then a ward, to continue.",change:"change",no_findings:"No findings",back_buildings:"Buildings",tap_building_hint:"Tap a building to see its wards.",wards_word:"wards",findings_word:"findings",all_clear:"All clear",staff_pick_title:"Who's on the round?",staff_pick_sub:"Select your name — it will be recorded with the findings you add.",by_word:"by",l_zone:"Zone (Emergency)",take_photo:"Take Photo",from_gallery:"From Gallery",l_round_type:"Round type",grand_start_hint:"Grand round uses the full IPC audit checklist (Y/N/NA + scoring).",grand_start_btn:"Start Grand Round Audit",day_added:"Findings added",day_first:"Add first finding",day_add_another:"Add another finding (same ward)",day_suggest:"Suggest",day_no_suggest:"No suggestion for this category — type manually.",day_rec_hint:"type manually or tap Generate",day_add_btn:"Add finding to session",day_save_all:"Save all & finish",day_added_one:"Finding added to session.",day_saving:"Saving all findings…",day_saved:"{n} finding(s) saved.",day_failed:"failed",day_need_finding:"Please write the finding first.",day_editing:"Editing finding — update and tap Add again.",l_timeact:"Time to act",act_now:"Immediately",act_3:"Within 3 days",act_7:"Within 7 days",rec_ai:"AI Generate",rec_manual:"Manual",rem_wards:"Wards with pending findings",bkt_title:"pending Daily IPC findings",bkt_im:"Immediate",bkt_w3:"Within 3 days",bkt_w7:"Within 7 days",bkt_nv:"Need verify",bkt_title2:"Pending Daily IPC findings by time-to-act",exc_title:"Wards past reply deadline",exc_wards:"Wards",bkt_tap:"Tap a box to see which wards",rem_pick_ward:"Select ward",bkt_none:"No wards in this group",grand_title:"Grand IPC Round",grand_pick_dr:"Select the UKI Doctor in-charge for this round:",grand_incharge:"Dr in-charge",grand_open:"Open - tap to take",grand_summary:"Progress summary",grand_progress:"Sections completed",grand_refresh:"Refresh progress",grand_refreshed:"Updated.",grand_st_none:"Not started",grand_st_prog:"In progress",grand_st_done:"Done",grand_dr_only:"Only the Dr in-charge can generate the final report:",grand_none_yet:"No sections claimed yet.",grand_back_secs:"Sections",grand_mark_done:"Mark section complete",grand_save_prog:"Save progress",grand_sec_done:"Section marked complete.",grand_sec_saved:"Progress saved.",grand_finalize:"Finalize and Generate Report",grand_partial:"Partial",grand_finding:"Finding",grand_add_finding:"Add another finding / photo",grand_pick_next:"Pick another section below, or Finalize when done.",grand_save_note:"Tip: each section is saved as you go. The final report appears in the Audits sheet only after the Dr in-charge taps Finalize.",btn_wa:"WhatsApp Reminder",info_rounds_h:"Daily vs Grand IPC Round",info_daily_p:"Quick ward rounds where you log individual IPC findings (one issue at a time) with photo and recommendation. Wards respond with evidence; you verify and resolve. Stored in the Findings sheet.",info_grand_p:"A full structured IPC audit using the MOH Infection Control Audit Tool (Section 1 Administrative & Standard Precaution, Section 2 Environmental Survey). Each component is scored Y/P/N/NA, sections can be shared among staff, and a compliance report is produced. Stored in the Audits sheet.",info_score_h:"Grand Round Scoring System",info_score_p:"Each item is answered Yes, Partial, No, or Not Applicable.",info_excluded:"excluded",info_score_formula:"Compliance % = (Yes + 0.5×Partial) ÷ (Yes + Partial + No) × 100. NA items are excluded from the total.",perf_good:"Good",perf_sat:"Satisfactory",perf_low:"Needs Improvement",info_howto_h:"How to Use (Ward Guide)",info_howto_tap:"Tap the image to enlarge.",grand_rem_title:"Grand IPC round(s) to complete",grand_rem_sub:"Tap a location below to resume and finish the audit.",grand_rem_none:"No Grand rounds pending",grand_rem_none_sub:"All started Grand IPC rounds are finalized.",round_daily:"Daily IPC Round",round_grand:"Grand IPC Round",round_daily_note:"Daily round — log individual findings by ward.",cov_title_daily:"Daily IPC coverage",cov_title_grand:"Grand IPC round coverage",cov_location:"Location",cov_done:"Done",cov_pending:"Not yet",cov_total:"Total",cov_resolved:"Resolved",cov_total_hint:"total findings this year",cov_grand_empty:"No Grand IPC rounds saved yet for this year. Do a Grand round from the Dashboard and tap Save Audit (needs the latest Code.gs deployed).",round_grand_note:"Grand round — full IPC audit checklist with Y/N/NA scoring.",audit_title:"Grand IPC Round — Audit",aud_yes:"Yes",aud_no:"No",aud_na:"N/A",aud_neg:"non-compliant",aud_compliance:"Compliance",aud_no_answer:"Answer items to see the compliance score",aud_finding_ph:"Describe the non-compliant finding…",aud_add_photo:"Add photo",aud_gen_report:"Generate Audit Report",aud_save:"Save Audit",aud_answer_first:"Answer at least one Y/N item first.",aud_all_compliant:"All applicable items compliant — no negative findings. ✅",aud_saving:"Saving audit…",aud_saved:"Audit saved.",aud_popup:"Please allow pop-ups to open the report.",aud_audited:"Audited",aud_not_audited:"Not audited",aud_audited_n:"audited",aud_avg:"Avg",aud_none:"No audits",aud_view_report:"View / Print Report",aud_none_yet:"No audits saved yet. Do a Grand IPC Round from the Dashboard.",aud_list_hint:"Saved audit reports (separate from Daily findings).",aud_report_drive:"Full report saved in Drive — please search:",
    entry_title:"New Finding Entry",l_ward:"Ward",l_category:"IPC Category",l_finding:"Finding / Issue",ph_finding:"Describe the finding observed during the round…",l_severity:"Severity",sev_low:"Low",sev_med:"Medium",sev_high:"High",l_photo_opt:"Finding Photo (optional)",up_capture:"Tap to capture / choose photo",btn_save_finding:"Save & Submit Finding",photo_word:"Photo",
    l_recommendation:"Recommendation / Corrective Guidance",ph_recommendation:"Recommended corrective action for the ward… (or tap Generate)",btn_ai_gen:"✨ Generate Recommendation",ai_gen_hint:"Draws on WHO, CDC, NHS & MOH Malaysia IPC guidance. You can edit before saving.",ai_generating:"Generating…",rec_label:"Recommendation",t_gen_need_finding:"Please enter the finding first.",
    respond_title:"Respond to Finding",l_corrective:"Corrective Action",ph_corrective:"Describe the corrective action taken…",l_evidence:"Improvement Evidence",req_atleast:"*at least one",ev_photo:"Photo",ev_pdf:"PDF File",ev_link:"Drive Link",btn_submit:"Submit Response",
@@ -799,7 +803,7 @@ const I18N={
    list_title:"Senarai Penemuan",f_all_status:"Semua Status",f_pending:"Menunggu",f_answered_verify:"Dijawab (perlu sahkan)",f_answered:"Dah Jawab",f_resolved:"Selesai",f_all_wards:"Semua Wad",f_all_bld:"Semua Bangunan",empty_view:"Tiada penemuan untuk paparan ini.",btn_report:"📄 Laporan",t_report_empty:"Tiada penemuan untuk laporan.",
    st_Baru:"Menunggu",st_Dijawab:"Dijawab",st_Selesai:"Selesai",urgent:"Perlu tindakan segera",
    lab_ward_action:"Tindakan Wad",lab_ipc_feedback:"IPC — Maklum Balas / Permintaan",lab_ipc_verified:"IPC — Disahkan",by_word:"Oleh",
-   btn_respond:"Jawab & Muat Naik Bukti",btn_resolve:"Tanda Selesai",btn_request:"Minta Tindakan Lanjut",btn_reopen:"Buka Semula",btn_delete:"Padam",confirm_delete:"Padam penemuan ini secara kekal? Ia akan dibuang dari sheet.",t_deleted:"Penemuan dipadam.",btn_edit:"Edit",edit_title:"Edit Penemuan",btn_save_edit:"Simpan Perubahan",t_saved_edit:"Penemuan dikemas kini.",bld_main:"Blok Utama",bld_wcc:"WCC (Wanita & Kanak-Kanak)",l_building:"Bangunan",pick_building_first:"Pilih bangunan, kemudian wad, untuk teruskan.",change:"tukar",no_findings:"Tiada penemuan",back_buildings:"Bangunan",tap_building_hint:"Tekan bangunan untuk lihat wadnya.",wards_word:"wad",findings_word:"penemuan",all_clear:"Tiada isu",staff_pick_title:"Siapa buat rounds?",staff_pick_sub:"Pilih nama anda — ia akan direkod bersama penemuan yang anda tambah.",by_word:"oleh",l_zone:"Zon (Kecemasan)",take_photo:"Ambil Gambar",from_gallery:"Dari Galeri",l_round_type:"Jenis round",grand_start_hint:"Grand round guna checklist audit IPC penuh (Y/N/NA + skor).",grand_start_btn:"Mula Audit Grand Round",day_added:"Finding ditambah",day_first:"Tambah finding pertama",day_add_another:"Tambah finding lain (wad sama)",day_suggest:"Cadang",day_no_suggest:"Tiada cadangan untuk kategori ini — taip sendiri.",day_rec_hint:"taip sendiri atau tekan Jana",day_add_btn:"Tambah finding ke sesi",day_save_all:"Simpan semua & selesai",day_added_one:"Finding ditambah ke sesi.",day_saving:"Menyimpan semua finding…",day_saved:"{n} finding disimpan.",day_failed:"gagal",day_need_finding:"Sila tulis finding dahulu.",day_editing:"Mengedit finding — kemas kini & tekan Tambah semula.",l_timeact:"Masa bertindak",act_now:"Segera",act_3:"Dalam 3 hari",act_7:"Dalam 7 hari",rec_ai:"Jana AI",rec_manual:"Manual",rem_wards:"Wad yang ada finding pending",bkt_title:"finding Daily IPC tertunggak",bkt_im:"Segera",bkt_w3:"Dalam 3 hari",bkt_w7:"Dalam 7 hari",bkt_nv:"Perlu sahkan",bkt_title2:"Finding Daily IPC ikut masa bertindak",exc_title:"Wad melebihi tempoh jawapan",exc_wards:"Wad",bkt_tap:"Tekan kotak untuk lihat wad",rem_pick_ward:"Pilih wad",bkt_none:"Tiada wad dalam kumpulan ini",grand_title:"Grand IPC Round",grand_pick_dr:"Pilih Doktor UKI in-charge untuk round ini:",grand_incharge:"Dr in-charge",grand_open:"Terbuka - tekan untuk ambil",grand_summary:"Ringkasan kemajuan",grand_progress:"Section selesai",grand_refresh:"Refresh kemajuan",grand_refreshed:"Dikemas kini.",grand_st_none:"Belum mula",grand_st_prog:"Sedang buat",grand_st_done:"Siap",grand_dr_only:"Hanya Dr in-charge boleh jana laporan akhir:",grand_none_yet:"Belum ada section diambil.",grand_back_secs:"Section",grand_mark_done:"Tandakan section siap",grand_save_prog:"Simpan kemajuan",grand_sec_done:"Section ditanda siap.",grand_sec_saved:"Kemajuan disimpan.",grand_finalize:"Muktamad dan Jana Laporan",grand_partial:"Separa",grand_finding:"Penemuan",grand_add_finding:"Tambah penemuan / gambar lagi",grand_add_remark:"Tambah remark / gambar (pilihan)",grand_remark:"Remark",grand_remark_ph:"Remark / nota (pilihan)…",grand_pick_next:"Pilih section lain di bawah, atau Muktamad bila siap.",grand_sync_fail:"Gagal sync — sila buka semula section & simpan sekali lagi.",grand_readonly:"baca sahaja",you_word:"anda",grand_findings_word:"penemuan",grand_loc_ph:"Lokasi penemuan (cth: Katil 3, bilik sluice)",grand_others_found:"Penemuan yang sudah direkod oleh orang lain (baca sahaja) — elak pertindihan:",grand_no_report:"Belum ada laporan (ongoing)",grand_has_report:"Dah ada laporan (selesai)",grand_none_ongoing:"Tiada yang ongoing.",grand_reedit:"Edit / Muktamad semula",drive_open:"Buka laporan Drive",drive_ph:"Tampal link Google Drive…",drive_save:"Simpan link",drive_saved:"Link Drive disimpan.",grand_sections_done:"Section lengkap",grand_items_answered:"Item dijawab",report_newtab:"Buka tab baru",report_del:"Padam laporan ini",report_del_confirm:"Padam laporan {ward} ini? Tak boleh diundur.",report_del_done:"Laporan dipadam.",grand_del:"Padam sesi ini (ujian)",grand_manage:"Sesi sedang berjalan / belum lengkap",edit_word:"Edit",grand_del_confirm:"Padam sesi grand round ini? Tindakan ini tak boleh diundur.",grand_del_done:"Sesi dipadam.",grand_save_note:"Tip: setiap section disimpan secara berperingkat. Laporan akhir muncul di sheet Audits hanya selepas Dr in-charge tekan Muktamad.",btn_wa:"Peringatan WhatsApp",info_rounds_h:"Daily vs Grand IPC Round",info_daily_p:"Rounds pantas di wad — rekod penemuan IPC individu (satu isu setiap kali) dengan gambar & saranan. Wad jawab dengan bukti; anda sahkan & selesaikan. Disimpan dalam sheet Findings.",info_grand_p:"Audit IPC penuh berstruktur guna MOH Infection Control Audit Tool (Section 1 Administrative & Standard Precaution, Section 2 Environmental Survey). Setiap komponen dimarkah Y/P/N/NA, section boleh dikongsi antara staf, dan laporan pematuhan dihasilkan. Disimpan dalam sheet Audits.",info_score_h:"Sistem Pemarkahan Grand Round",info_score_p:"Setiap item dijawab Ya, Separa, Tidak, atau Tidak Berkaitan.",info_excluded:"dikecualikan",info_score_formula:"Pematuhan % = (Ya + 0.5×Separa) ÷ (Ya + Separa + Tidak) × 100. Item NA dikecualikan dari jumlah.",perf_good:"Baik",perf_sat:"Memuaskan",perf_low:"Perlu Penambahbaikan",info_howto_h:"Cara Guna (Panduan Wad)",info_howto_tap:"Tekan gambar untuk besarkan.",grand_rem_title:"Grand IPC round belum lengkap",grand_rem_sub:"Tekan lokasi di bawah untuk sambung & lengkapkan audit.",grand_rem_none:"Tiada Grand round tertunggak",grand_rem_none_sub:"Semua Grand IPC round yang dimulakan telah dimuktamadkan.",round_daily:"Daily IPC Round",round_grand:"Grand IPC Round",round_daily_note:"Rounds harian — rekod penemuan individu ikut wad.",cov_title_daily:"Liputan IPC Harian",cov_title_grand:"Liputan Grand IPC Round",cov_location:"Lokasi",cov_done:"Dah round",cov_pending:"Belum",cov_total:"Jumlah",cov_resolved:"Selesai",cov_total_hint:"jumlah finding tahun ini",cov_grand_empty:"Belum ada Grand IPC round disimpan untuk tahun ini. Buat Grand round dari Dashboard & tekan Save Audit (perlu Code.gs terkini di-deploy).",round_grand_note:"Grand round — checklist audit IPC penuh dengan skor Y/N/NA.",audit_title:"Grand IPC Round — Audit",aud_yes:"Ya",aud_no:"Tidak",aud_na:"TB",aud_neg:"tidak patuh",aud_compliance:"Pematuhan",aud_no_answer:"Jawab item untuk lihat skor pematuhan",aud_finding_ph:"Terangkan penemuan tidak patuh…",aud_add_photo:"Tambah gambar",aud_gen_report:"Jana Laporan Audit",aud_save:"Simpan Audit",aud_answer_first:"Jawab sekurang-kurangnya satu item Y/N dahulu.",aud_all_compliant:"Semua item berkenaan patuh — tiada penemuan negatif. ✅",aud_saving:"Menyimpan audit…",aud_saved:"Audit disimpan.",aud_popup:"Sila benarkan pop-up untuk buka laporan.",aud_audited:"Diaudit",aud_not_audited:"Belum diaudit",aud_audited_n:"diaudit",aud_avg:"Purata",aud_none:"Tiada audit",aud_view_report:"Lihat / Cetak Laporan",aud_none_yet:"Belum ada audit disimpan. Buat Grand IPC Round dari Dashboard.",aud_list_hint:"Laporan audit tersimpan (berasingan dari finding Daily).",aud_report_drive:"Laporan penuh disimpan dalam Drive — sila cari:",
+   btn_respond:"Jawab & Muat Naik Bukti",btn_resolve:"Tanda Selesai",btn_request:"Minta Tindakan Lanjut",btn_reopen:"Buka Semula",btn_delete:"Padam",confirm_delete:"Padam penemuan ini secara kekal? Ia akan dibuang dari sheet.",t_deleted:"Penemuan dipadam.",btn_edit:"Edit",edit_title:"Edit Penemuan",btn_save_edit:"Simpan Perubahan",t_saved_edit:"Penemuan dikemas kini.",bld_main:"Blok Utama",bld_wcc:"WCC (Wanita & Kanak-Kanak)",l_building:"Bangunan",pick_building_first:"Pilih bangunan, kemudian wad, untuk teruskan.",change:"tukar",no_findings:"Tiada penemuan",back_buildings:"Bangunan",tap_building_hint:"Tekan bangunan untuk lihat wadnya.",wards_word:"wad",findings_word:"penemuan",all_clear:"Tiada isu",staff_pick_title:"Siapa buat rounds?",staff_pick_sub:"Pilih nama anda — ia akan direkod bersama penemuan yang anda tambah.",by_word:"oleh",l_zone:"Zon (Kecemasan)",take_photo:"Ambil Gambar",from_gallery:"Dari Galeri",l_round_type:"Jenis round",grand_start_hint:"Grand round guna checklist audit IPC penuh (Y/N/NA + skor).",grand_start_btn:"Mula Audit Grand Round",day_added:"Finding ditambah",day_first:"Tambah finding pertama",day_add_another:"Tambah finding lain (wad sama)",day_suggest:"Cadang",day_no_suggest:"Tiada cadangan untuk kategori ini — taip sendiri.",day_rec_hint:"taip sendiri atau tekan Jana",day_add_btn:"Tambah finding ke sesi",day_save_all:"Simpan semua & selesai",day_added_one:"Finding ditambah ke sesi.",day_saving:"Menyimpan semua finding…",day_saved:"{n} finding disimpan.",day_failed:"gagal",day_need_finding:"Sila tulis finding dahulu.",day_editing:"Mengedit finding — kemas kini & tekan Tambah semula.",l_timeact:"Masa bertindak",act_now:"Segera",act_3:"Dalam 3 hari",act_7:"Dalam 7 hari",rec_ai:"Jana AI",rec_manual:"Manual",rem_wards:"Wad yang ada finding pending",bkt_title:"finding Daily IPC tertunggak",bkt_im:"Segera",bkt_w3:"Dalam 3 hari",bkt_w7:"Dalam 7 hari",bkt_nv:"Perlu sahkan",bkt_title2:"Finding Daily IPC ikut masa bertindak",exc_title:"Wad melebihi tempoh jawapan",exc_wards:"Wad",bkt_tap:"Tekan kotak untuk lihat wad",rem_pick_ward:"Pilih wad",bkt_none:"Tiada wad dalam kumpulan ini",grand_title:"Grand IPC Round",grand_pick_dr:"Pilih Doktor UKI in-charge untuk round ini:",grand_incharge:"Dr in-charge",grand_open:"Terbuka - tekan untuk ambil",grand_summary:"Ringkasan kemajuan",grand_progress:"Section selesai",grand_refresh:"Refresh kemajuan",grand_refreshed:"Dikemas kini.",grand_st_none:"Belum mula",grand_st_prog:"Sedang buat",grand_st_done:"Siap",grand_dr_only:"Hanya Dr in-charge boleh jana laporan akhir:",grand_none_yet:"Belum ada section diambil.",grand_back_secs:"Section",grand_mark_done:"Tandakan section siap",grand_save_prog:"Simpan kemajuan",grand_sec_done:"Section ditanda siap.",grand_sec_saved:"Kemajuan disimpan.",grand_finalize:"Muktamad dan Jana Laporan",grand_partial:"Separa",grand_finding:"Penemuan",grand_add_finding:"Tambah penemuan / gambar lagi",grand_pick_next:"Pilih section lain di bawah, atau Muktamad bila siap.",grand_save_note:"Tip: setiap section disimpan secara berperingkat. Laporan akhir muncul di sheet Audits hanya selepas Dr in-charge tekan Muktamad.",btn_wa:"Peringatan WhatsApp",info_rounds_h:"Daily vs Grand IPC Round",info_daily_p:"Rounds pantas di wad — rekod penemuan IPC individu (satu isu setiap kali) dengan gambar & saranan. Wad jawab dengan bukti; anda sahkan & selesaikan. Disimpan dalam sheet Findings.",info_grand_p:"Audit IPC penuh berstruktur guna MOH Infection Control Audit Tool (Section 1 Administrative & Standard Precaution, Section 2 Environmental Survey). Setiap komponen dimarkah Y/P/N/NA, section boleh dikongsi antara staf, dan laporan pematuhan dihasilkan. Disimpan dalam sheet Audits.",info_score_h:"Sistem Pemarkahan Grand Round",info_score_p:"Setiap item dijawab Ya, Separa, Tidak, atau Tidak Berkaitan.",info_excluded:"dikecualikan",info_score_formula:"Pematuhan % = (Ya + 0.5×Separa) ÷ (Ya + Separa + Tidak) × 100. Item NA dikecualikan dari jumlah.",perf_good:"Baik",perf_sat:"Memuaskan",perf_low:"Perlu Penambahbaikan",info_howto_h:"Cara Guna (Panduan Wad)",info_howto_tap:"Tekan gambar untuk besarkan.",grand_rem_title:"Grand IPC round belum lengkap",grand_rem_sub:"Tekan lokasi di bawah untuk sambung & lengkapkan audit.",grand_rem_none:"Tiada Grand round tertunggak",grand_rem_none_sub:"Semua Grand IPC round yang dimulakan telah dimuktamadkan.",round_daily:"Daily IPC Round",round_grand:"Grand IPC Round",round_daily_note:"Rounds harian — rekod penemuan individu ikut wad.",cov_title_daily:"Liputan IPC Harian",cov_title_grand:"Liputan Grand IPC Round",cov_location:"Lokasi",cov_done:"Dah round",cov_pending:"Belum",cov_total:"Jumlah",cov_resolved:"Selesai",cov_total_hint:"jumlah finding tahun ini",cov_grand_empty:"Belum ada Grand IPC round disimpan untuk tahun ini. Buat Grand round dari Dashboard & tekan Save Audit (perlu Code.gs terkini di-deploy).",round_grand_note:"Grand round — checklist audit IPC penuh dengan skor Y/N/NA.",audit_title:"Grand IPC Round — Audit",aud_yes:"Ya",aud_no:"Tidak",aud_na:"TB",aud_neg:"tidak patuh",aud_compliance:"Pematuhan",aud_no_answer:"Jawab item untuk lihat skor pematuhan",aud_finding_ph:"Terangkan penemuan tidak patuh…",aud_add_photo:"Tambah gambar",aud_gen_report:"Jana Laporan Audit",aud_save:"Simpan Audit",aud_answer_first:"Jawab sekurang-kurangnya satu item Y/N dahulu.",aud_all_compliant:"Semua item berkenaan patuh — tiada penemuan negatif. ✅",aud_saving:"Menyimpan audit…",aud_saved:"Audit disimpan.",aud_popup:"Sila benarkan pop-up untuk buka laporan.",aud_audited:"Diaudit",aud_not_audited:"Belum diaudit",aud_audited_n:"diaudit",aud_avg:"Purata",aud_none:"Tiada audit",aud_view_report:"Lihat / Cetak Laporan",aud_none_yet:"Belum ada audit disimpan. Buat Grand IPC Round dari Dashboard.",aud_list_hint:"Laporan audit tersimpan (berasingan dari finding Daily).",aud_report_drive:"Laporan penuh disimpan dalam Drive — sila cari:",
    entry_title:"Entri Penemuan Baru",l_ward:"Wad",l_category:"Kategori IPC",l_finding:"Penemuan / Isu",ph_finding:"Terangkan penemuan semasa lawatan…",l_severity:"Tahap Keterukan",sev_low:"Rendah",sev_med:"Sederhana",sev_high:"Tinggi",l_photo_opt:"Gambar Penemuan (pilihan)",up_capture:"Ketik untuk ambil / pilih gambar",btn_save_finding:"Simpan & Hantar Penemuan",photo_word:"Gambar",
    l_recommendation:"Saranan / Panduan Pembetulan",ph_recommendation:"Tindakan pembetulan disarankan untuk wad… (atau tekan Jana)",btn_ai_gen:"✨ Jana Saranan",ai_gen_hint:"Merujuk garis panduan WHO, CDC, NHS & MOH Malaysia. Anda boleh edit sebelum simpan.",ai_generating:"Menjana…",rec_label:"Saranan",t_gen_need_finding:"Sila isi penemuan dahulu.",
    respond_title:"Jawab Penemuan",l_corrective:"Tindakan Penambahbaikan",ph_corrective:"Terangkan tindakan pembetulan yang diambil…",l_evidence:"Bukti Penambahbaikan",req_atleast:"*sekurang-kurangnya satu",ev_photo:"Gambar",ev_pdf:"Fail PDF",ev_link:"Link Drive",btn_submit:"Hantar Jawapan",
@@ -894,12 +898,25 @@ let demoAudits=[
   {ward:"Jabatan Pergigian", auditor:"Dr Zaila", overall:76, performance:"Satisfactory", sections:[], negatives:[], date:"2026-06-20 14:00"}
 ];
 let demoSessions={
-  "Jab. Radiologi|2026-08-11":{id:"Jab. Radiologi|2026-08-11",ward:"Jab. Radiologi",dr:"Dr Aneesa",date:"2026-08-11",status:"open",claims:{"s0g0":{staff:"Dr Aneesa",status:"progress",data:{items:{"0":{ans:{"Dr Aneesa":"N"},findings:[{by:"Dr Aneesa",loc:"Nurse station",desc:"No written IPC policy displayed",photos:[]}]}}}}}}
+  "Jab. Radiologi|2026-08-11":{id:"Jab. Radiologi|2026-08-11",ward:"Jab. Radiologi",dr:"Dr Aneesa",date:"2026-08-11",status:"open",claims:{"s0g0":{staff:"Dr Aneesa",status:"done",data:{items:{"0":{v:"N",findings:[{desc:"No written IPC policy displayed",photos:[]}]}}}},"s0g1":{staff:"ICN Maria",status:"progress",data:null}}}
 };
 
 /* API */
-async function api(action,payload={}){
-  if(DEMO) return demoApi(action,payload);
+// Actions safe to queue offline (writes only — reads like login/list/listAudits are never queued)
+const QUEUEABLE_ACTIONS=["add","respond","requestMore","close","reopen","deleteFinding","editFinding",
+  "saveAudit","auditSaveSection","auditFinalize","feedback","addRef","delRef"];
+const OFFQ_KEY="ipcround_offline_queue_v1";
+function offQLoad(){ try{ return JSON.parse(localStorage.getItem(OFFQ_KEY)||"[]"); }catch(e){ return []; } }
+function offQSave(q){ try{ localStorage.setItem(OFFQ_KEY,JSON.stringify(q)); }catch(e){ /* storage full/unavailable — nothing else we can do */ } }
+function offQCount(){ return offQLoad().length; }
+function offQPush(action,payload){
+  const q=offQLoad();
+  q.push({qid:"q"+Date.now()+Math.random().toString(36).slice(2,7), action:action, payload:payload, ts:Date.now()});
+  offQSave(q);
+  updateOfflineBadge();
+}
+// One raw network call — used both for live sends and for flushing the queue
+async function _apiCall(action,payload={}){
   let res;
   const ctrl=new AbortController();
   const timer=setTimeout(()=>ctrl.abort(),45000);
@@ -916,6 +933,62 @@ async function api(action,payload={}){
   try{ return JSON.parse(text); }
   catch(e){ throw new Error("NOT JSON (HTTP "+res.status+"): "+text.slice(0,140)); }
 }
+// In-flight lock: if the exact same action+payload is already being sent, reuse that
+// same request instead of firing a second one — stops duplicate sends from a double-tap.
+const _apiInFlight=new Map();
+async function api(action,payload={}){
+  if(DEMO) return demoApi(action,payload);
+  var sig; try{ sig=action+"::"+JSON.stringify(payload); }catch(e){ sig=action+"::"+Math.random(); }
+  if(_apiInFlight.has(sig)) return _apiInFlight.get(sig);
+  // No internet at all — queue immediately instead of waiting for a timeout (write actions only)
+  if(!navigator.onLine && QUEUEABLE_ACTIONS.indexOf(action)>=0){
+    offQPush(action,payload);
+    return {ok:true, queued:true};
+  }
+  const p=(async function(){
+    try{ return await _apiCall(action,payload); }
+    catch(err){
+      if(QUEUEABLE_ACTIONS.indexOf(action)>=0){ offQPush(action,payload); return {ok:true, queued:true}; }
+      throw err;
+    }
+  })();
+  _apiInFlight.set(sig,p);
+  try{ return await p; } finally{ _apiInFlight.delete(sig); }
+}
+// Retry queued items in order once internet is back. Stops at the first item that still
+// fails (keeps order), so a still-bad connection doesn't scramble the sequence of edits.
+let _offQFlushing=false;
+async function flushOfflineQueue(){
+  if(_offQFlushing || !navigator.onLine) return;
+  const q=offQLoad(); if(!q.length) return;
+  _offQFlushing=true;
+  let sent=0;
+  for(let i=0;i<q.length;i++){
+    try{ await _apiCall(q[i].action,q[i].payload); sent++; }
+    catch(err){ break; } // still failing — leave this and the rest queued, try again later
+  }
+  offQSave(q.slice(sent));
+  _offQFlushing=false;
+  updateOfflineBadge();
+  if(sent>0){ toast(sent+" item tertangguh berjaya dihantar."); if(typeof render==="function") render(); }
+}
+function updateOfflineBadge(){
+  let el=document.getElementById("offlineBadge");
+  if(!el){
+    el=document.createElement("div"); el.id="offlineBadge";
+    el.style.cssText="position:fixed;left:0;right:0;bottom:0;z-index:99999;text-align:center;padding:9px 12px;font-size:12.5px;font-weight:600;color:#fff;line-height:1.4;";
+    document.body.appendChild(el);
+  }
+  const n=offQCount(), online=navigator.onLine;
+  if(!online){ el.style.display="block"; el.style.background="#b02a2a";
+    el.textContent="📴 Tiada internet — perubahan disimpan dalam telefon, akan dihantar automatik bila online semula."+(n?(" ("+n+" menunggu)"):"");
+  } else if(n>0){ el.style.display="block"; el.style.background="#b8860b";
+    el.textContent="⏳ Menghantar "+n+" perubahan tertangguh...";
+  } else { el.style.display="none"; }
+}
+window.addEventListener("online", flushOfflineQueue);
+window.addEventListener("offline", updateOfflineBadge);
+setInterval(flushOfflineQueue, 20000);
 function demoApi(action,p){return new Promise(r=>setTimeout(()=>{
   const today=new Date().toISOString().slice(0,10);
   if(action==="login"){const u=demoUsers.find(x=>x.u===p.username.toLowerCase()&&x.p===p.password);
@@ -931,14 +1004,11 @@ function demoApi(action,p){return new Promise(r=>setTimeout(()=>{
   else if(action==="editFinding"){const it=demoDB.find(x=>x.id===p.id);if(it){it.kategori=p.kategori;it.tajuk=p.tajuk;it.keterukan=p.keterukan;it.recommendation=p.recommendation||"";}r({ok:true});}
   else if(action==="saveAudit"){demoAudits.unshift({ward:p.ward,auditor:p.auditor,overall:p.overall,performance:p.performance,sections:p.sections||[],negatives:p.negatives||[],date:today+" "+new Date().toTimeString().slice(0,5)});r({ok:true});}
   else if(action==="listAudits"){r({ok:true,items:JSON.parse(JSON.stringify(demoAudits))});}
-  else if(action==="auditSetDriveLink"){var f=demoAudits.find(function(x){return x.ward===p.ward;});if(f)f.driveLink=p.link||"";r({ok:true});}
-  else if(action==="auditDeleteReport"){var gi=demoAudits.findIndex(function(x){return x.ward===p.ward && String(x.date).slice(0,10)===String(p.date).slice(0,10);});if(gi<0)gi=demoAudits.findIndex(function(x){return x.ward===p.ward;});if(gi>=0){demoAudits.splice(gi,1);r({ok:true});}else r({ok:false,error:"Report not found."});}
-  else if(action==="listSessions"){var out=[];Object.keys(demoSessions).forEach(function(id){var s=demoSessions[id];var done=0,total=0;Object.keys(s.claims).forEach(function(k){total++;if(s.claims[k].status==="done")done++;});out.push({id:id,ward:s.ward,dr:s.dr,date:s.date,status:s.status,done:done,total:total});});r({ok:true,items:out});}
-  else if(action==="auditDeleteSession"){ if(demoSessions[p.id]){ delete demoSessions[p.id]; r({ok:true}); } else r({ok:false,error:"Session not found."}); }
+  else if(action==="listSessions"){var out=[];Object.keys(demoSessions).forEach(function(id){var s=demoSessions[id];var done=0,total=0;Object.keys(s.claims).forEach(function(k){total++;if(s.claims[k].status==="done")done++;});out.push({ward:s.ward,dr:s.dr,date:s.date,status:s.status,done:done,total:total});});r({ok:true,items:out});}
   else if(action==="auditStart"){var id=p.ward+"|"+today;if(!demoSessions[id])demoSessions[id]={id:id,ward:p.ward,dr:p.dr||"",date:today,status:"open",claims:{}};else if(!demoSessions[id].dr&&p.dr)demoSessions[id].dr=p.dr;r({ok:true,session:JSON.parse(JSON.stringify(demoSessions[id]))});}
   else if(action==="auditGet"){var s=demoSessions[p.id];r(s?{ok:true,session:JSON.parse(JSON.stringify(s))}:{ok:false,error:"Session not found."});}
-  else if(action==="auditClaim"){var s=demoSessions[p.id];r(s?{ok:true,claims:JSON.parse(JSON.stringify(s.claims))}:{ok:false,error:"Session not found."});}
-  else if(action==="auditSaveSection"){var s=demoSessions[p.id];if(!s){r({ok:false,error:"Session not found."});}else{var prev=s.claims[p.key],prevIt=(prev&&prev.data&&prev.data.items)||{};var inc=(p.data&&p.data.items)||{};var mg={};Object.keys(prevIt).forEach(function(k){mg[k]=prevIt[k];});Object.keys(inc).forEach(function(k){var ic=inc[k],ex=mg[k]||{ans:{},findings:[]};var ans={};if(ex.ans){Object.keys(ex.ans).forEach(function(st){ans[st]=ex.ans[st];});}else if(ex.v){ans["_"]=ex.v;}if(ic.ans&&ic.ans[p.staff]!==undefined)ans[p.staff]=ic.ans[p.staff];var others=(ex.findings||[]).filter(function(f){return f.by&&f.by!==p.staff;});var mine=(ic.findings||[]).filter(function(f){return !f.by||f.by===p.staff;}).map(function(f){f.by=p.staff;return f;});mg[k]={ans:ans,findings:others.concat(mine)};});s.claims[p.key]={staff:p.staff,status:(p.done?"done":"progress"),data:{items:mg},detail:p.detail||""};r({ok:true,claims:JSON.parse(JSON.stringify(s.claims))});}}
+  else if(action==="auditClaim"){var s=demoSessions[p.id];if(!s){r({ok:false,error:"Session not found."});}else{var c=s.claims[p.key];if(c&&c.staff&&c.staff!==p.staff&&c.status!=="done"){r({ok:false,error:"Locked by "+c.staff,claims:JSON.parse(JSON.stringify(s.claims))});}else{if(!c)s.claims[p.key]={staff:p.staff,status:"progress",data:null};else{c.staff=p.staff;if(c.status==="done")c.status="progress";}r({ok:true,claims:JSON.parse(JSON.stringify(s.claims))});}}}
+  else if(action==="auditSaveSection"){var s=demoSessions[p.id];if(!s){r({ok:false,error:"Session not found."});}else{s.claims[p.key]={staff:p.staff,status:(p.done?"done":"progress"),data:p.data||{items:{}}};r({ok:true,claims:JSON.parse(JSON.stringify(s.claims))});}}
   else if(action==="auditFinalize"){demoAudits.unshift({ward:p.ward,auditor:p.auditor,overall:p.overall,performance:p.performance,sections:p.sections||[],negatives:p.negatives||[],date:today+" "+new Date().toTimeString().slice(0,5)});if(demoSessions[p.id])demoSessions[p.id].status="finalized";r({ok:true});}
   else if(action==="feedback"){r({ok:true});}
   else if(action==="listRefs"){r({ok:true,items:JSON.parse(JSON.stringify(demoRefs))});}
@@ -1081,8 +1151,8 @@ function renderDashUKI(){
     if(roundType==="grand"){
       const pend=sessions.filter(s=>s.status!=="finalized");
       if(pend.length){
-        const opts=pend.map(s=>`<option value="${esc(s.id)}">${esc(s.ward)} — ${s.done||0}/${s.total||0} ${t("grand_st_done")}</option>`).join("");
-        rem=`<div class="reminder"><div class="ic">📋</div><div class="tx"><b>${pend.length} ${t("grand_rem_title")}</b><small>${t("grand_rem_sub")}</small><select class="rem-select" onchange="if(this.value)resumeGrandById(this.value)"><option value="">${t("rem_pick_ward")} (${pend.length})</option>${opts}</select></div></div>`;
+        const opts=pend.map(s=>`<option value="${esc(s.ward)}">${esc(s.ward)} — ${s.done||0}/${s.total||0} ${t("grand_st_done")}</option>`).join("");
+        rem=`<div class="reminder"><div class="ic">📋</div><div class="tx"><b>${pend.length} ${t("grand_rem_title")}</b><small>${t("grand_rem_sub")}</small><select class="rem-select" onchange="if(this.value)resumeGrand(this.value)"><option value="">${t("rem_pick_ward")} (${pend.length})</option>${opts}</select></div></div>`;
       } else {
         rem=`<div class="reminder ok"><div class="ic">✅</div><div class="tx"><b>${t("grand_rem_none")}</b><small>${t("grand_rem_none_sub")}</small></div></div>`;
       }
@@ -1175,15 +1245,6 @@ function findingAct(x){
   return "Within 3 days";
 }
 function actLimit(a){ return a==="Immediately"?0:a==="Within 7 days"?7:3; }
-async function resumeGrandById(id){
-  if(!id){ toast(t("t_failed"),true); return; }
-  toast(t("aud_saving"));
-  try{ const res=await api("auditGet",{id:id});
-    if(!res||!res.ok){ toast((res&&res.error)?res.error:t("t_failed"),true); return; }
-    gSession=res.session; gDr=res.session.dr||""; auditWard=res.session.ward;
-    view = gDr ? "grandSecs" : "grandDr"; setActive(); render();
-  }catch(e){ toast(e.message||t("t_failed"),true); }
-}
 async function resumeGrand(ward){
   auditWard=ward; toast(t("aud_saving"));
   try{ const res=await api("auditStart",{ward:ward,dr:""});
@@ -1192,33 +1253,12 @@ async function resumeGrand(ward){
     view = gDr ? "grandSecs" : "grandDr"; setActive(); render();
   }catch(e){ toast(e.message||t("t_failed"),true); }
 }
-async function refreshSessions(){
-  try{ const rs=await api("listSessions",{}); sessions=rs.ok?rs.items:sessions; }catch(e){}
-  try{ const ra=await api("listAudits",{}); audits=ra.ok?ra.items:audits; }catch(e){}
-}
-async function deleteSessionById(id){
-  if(!id){ toast(t("t_failed"),true); return; }
-  if(!confirm(t("grand_del_confirm"))) return;
-  toast(t("aud_saving"));
-  try{ const res=await api("auditDeleteSession",{id:id});
-    if(!res||!res.ok){ toast((res&&res.error)?res.error:t("t_failed"),true); return; }
-    sessions = sessions.filter(s=> s.id!==id && (String(s.ward)+"|"+String(s.date))!==id );
-    if(gSession && gSession.id===id){ gSession=null; gGroup=null; gDraft={}; }
-    await refreshSessions();
-    toast(t("grand_del_done"));
-    render();
-  }catch(e){ toast(e.message||t("t_failed"),true); }
-}
-async function deleteGrandSession(){
-  if(!gSession||!gSession.id) return;
-  await deleteSessionById(gSession.id);
-  if(!gSession){ view="dash"; setActive(); render(); }
-}
+
+/* ===== Grand IPC Round — audit form, scoring, report ===== */
 /* ===== Collaborative Grand IPC Round ===== */
 let gDr="", gSession=null, gGroup=null, gDraft={}, gMsg="";
 function groupKey(si,gi){return "s"+si+"g"+gi;}
 const GRAND_DRS=["Dr Aneesa","Dr Saihah"];
-function isSupervisor(){ return GRAND_DRS.indexOf(ukiStaff)>=0; }
 function openAudit(w){ auditWard=w; gDr=""; gSession=null; gGroup=null; view="grandDr"; setActive(); render(); }
 function renderGrandDr(){
   const cards=STAFF.filter(function(s){return GRAND_DRS.indexOf(s.name)>=0;}).map(function(s){
@@ -1242,29 +1282,26 @@ async function refreshSession(){
 }
 function sectionStatus(si,gi){
   const c=gSession&&gSession.claims?gSession.claims[groupKey(si,gi)]:null;
-  const total=AUDIT[si].g[gi].i.length;
-  const items=(c&&c.data&&c.data.items)||{};
-  let answered=0; for(var k in items){ if(items[k]&&itemAgg(items[k])) answered++; }
-  if(answered===0) return {cls:"red", status:"none", answered:0, total:total};
-  if(answered>=total) return {cls:"green", status:"done", answered:answered, total:total};
-  return {cls:"yellow", status:"progress", answered:answered, total:total};
+  if(!c) return {cls:"red",staff:"",status:"none"};
+  if(c.status==="done") return {cls:"green",staff:c.staff||"",status:"done"};
+  return {cls:"yellow",staff:c.staff||"",status:"progress"};
 }
 function renderGrandSecs(){
   const isDr = gDr && gDr===ukiStaff;
-  let done=0,total=0,ansItems=0,totItems=0;
-  const secsHtml=AUDIT.map(function(sec,si){
+  let done=0,total=0;
+  const secsHtml=curAudit().map(function(sec,si){
     const groups=sec.g.map(function(g,gi){
-      total++; totItems+=g.i.length; const st=sectionStatus(si,gi); if(st.status==="done")done++; ansItems+=st.answered;
-      const badge = st.status==="done"?`✅ ${st.answered}/${st.total}`: st.status==="progress"?`✏️ ${st.answered}/${st.total}`:`🔴 ${t("grand_open")}`;
-      return `<div class="gsec ${st.cls}" onclick="claimGroup(${si},${gi})">
+      total++; const st=sectionStatus(si,gi); if(st.status==="done")done++;
+      const lockedByOther = st.staff && st.staff!==ukiStaff && st.status!=="done";
+      const badge = st.status==="done"?`✅ ${esc(st.staff)}`: st.status==="progress"?`✏️ ${esc(st.staff)}`:`🔴 ${t("grand_open")}`;
+      return `<div class="gsec ${st.cls} ${lockedByOther?'locked':''}" onclick="${lockedByOther?'':`claimGroup(${si},${gi})`}">
         <div class="gsec-name">${esc(g.n)}</div><div class="gsec-badge">${badge}</div></div>`;
     }).join("");
     return `<div class="aud-sname">${esc(sec.s)}</div>${groups}`;
   }).join("");
   const summary=`<div class="gsummary"><div class="gs-h">${t("grand_summary")}</div>
-     <div class="gs-row"><span>${t("grand_sections_done")}</span><b>${done}/${total}</b></div>
-     <div class="gs-row"><span>${t("grand_items_answered")}</span><b>${ansItems}/${totItems}</b></div>
-     <div class="gs-bar"><div style="width:${totItems?Math.round(ansItems/totItems*100):0}%"></div></div>
+     <div class="gs-row"><span>${t("grand_progress")}</span><b>${done}/${total}</b></div>
+     <div class="gs-bar"><div style="width:${total?Math.round(done/total*100):0}%"></div></div>
      <div class="gs-who">${grandWhoList()}</div></div>`;
   const banner = gMsg ? `<div class="save-banner">✅ ${esc(gMsg)} · ${t("grand_pick_next")}</div>` : "";
   gMsg="";
@@ -1278,7 +1315,6 @@ function renderGrandSecs(){
     </div>
     <div class="gsec-legend"><span class="dot red"></span>${t("grand_st_none")} <span class="dot yellow"></span>${t("grand_st_prog")} <span class="dot green"></span>${t("grand_st_done")}</div>
     <button class="a-line" style="width:100%;padding:11px;margin-bottom:10px" onclick="refreshSession()">🔄 ${t("grand_refresh")}</button>
-    ${(gSession && gSession.status!=="finalized")?`<button class="a-line" style="width:100%;padding:11px;margin-bottom:10px;color:#c0341a;border-color:#f0b3a8" onclick="deleteGrandSession()">🗑 ${t("grand_del")}</button>`:""}
     ${summary}
     <div class="grand-note">${t("grand_save_note")}</div>
     ${secsHtml}
@@ -1288,62 +1324,36 @@ function renderGrandSecs(){
 function grandWhoList(){
   if(!gSession||!gSession.claims)return "";
   const by={};
-  Object.keys(gSession.claims).forEach(function(k){var c=gSession.claims[k];var items=(c&&c.data&&c.data.items)||{};
-    Object.keys(items).forEach(function(ii){ (items[ii].findings||[]).forEach(function(f){ if(f.by){ by[f.by]=(by[f.by]||0)+1; } }); });
-  });
+  Object.keys(gSession.claims).forEach(function(k){var c=gSession.claims[k];if(c&&c.staff){by[c.staff]=by[c.staff]||{done:0,prog:0};if(c.status==="done")by[c.staff].done++;else by[c.staff].prog++;}});
   const names=Object.keys(by);
   if(!names.length)return `<div class="gs-none">${t("grand_none_yet")}</div>`;
-  return names.map(function(n){return `<div class="gs-person">${esc(n)}: <b>${by[n]}</b> ${t("grand_findings_word")}</div>`;}).join("");
+  return names.map(function(n){return `<div class="gs-person">${esc(n)}: <b>${by[n].done}</b> ${t("grand_st_done")}${by[n].prog?` · ${by[n].prog} ${t("grand_st_prog")}`:""}</div>`;}).join("");
 }
-function claimGroup(si,gi){
+async function claimGroup(si,gi){
   const key=groupKey(si,gi);
-  gGroup={si:si,gi:gi};
-  gDraft={};
-  const cLocal=gSession.claims && gSession.claims[key];
-  if(cLocal&&cLocal.data&&cLocal.data.items){ Object.keys(cLocal.data.items).forEach(function(ii){gDraft[ii]=JSON.parse(JSON.stringify(cLocal.data.items[ii]));}); }
-  view="grandSec"; render();
-  // background: pull latest (others' contributions) into the session list (not the open draft)
-  api("auditGet",{id:gSession.id}).then(function(res){ if(res&&res.ok&&res.session&&res.session.claims){ gSession.claims=res.session.claims; } }).catch(function(){});
+  try{ const res=await api("auditClaim",{id:gSession.id,key:key,staff:ukiStaff});
+    if(!res||!res.ok){ if(res&&res.claims)gSession.claims=res.claims; toast((res&&res.error)?res.error:t("t_failed"),true); render(); return; }
+    gSession.claims=res.claims;
+    gGroup={si:si,gi:gi};
+    gDraft={};
+    const c=gSession.claims[key];
+    if(c&&c.data&&c.data.items){ Object.keys(c.data.items).forEach(function(ii){gDraft[ii]=JSON.parse(JSON.stringify(c.data.items[ii]));}); }
+    view="grandSec"; render();
+  }catch(e){ toast(e.message||t("t_failed"),true); }
 }
-function myAns(ii){ var d=gDraft[ii]; if(!d)return ""; if(d.ans)return d.ans[ukiStaff]||""; return d.v||""; }
-function itemAgg(item){ if(!item)return ""; var vals=[]; if(item.ans){for(var s in item.ans){if(item.ans[s])vals.push(item.ans[s]);}}else if(item.v){vals.push(item.v);} if(vals.indexOf("N")>=0)return "N"; if(vals.indexOf("P")>=0)return "P"; if(vals.indexOf("Y")>=0)return "Y"; if(vals.indexOf("NA")>=0)return "NA"; return ""; }
-function itemAnswerList(item){ var out=[]; if(item&&item.ans){for(var s in item.ans){if(item.ans[s])out.push({by:s,v:item.ans[s]});}}else if(item&&item.v){out.push({by:"",v:item.v});} return out; }
-function gSecSet(ii,v){
-  gDraft[ii]=gDraft[ii]||{ans:{},findings:[]}; gDraft[ii].ans=gDraft[ii].ans||{}; gDraft[ii].findings=gDraft[ii].findings||[];
-  gDraft[ii].ans[ukiStaff]=v;
-  if(v==="N"||v==="P"){ var hasMine=gDraft[ii].findings.some(function(f){return (f.by||ukiStaff)===ukiStaff;}); if(!hasMine)gDraft[ii].findings.push({by:ukiStaff,loc:"",desc:"",photos:[]}); }
-  renderGrandSec();
-}
-function gAddFinding(ii){ gDraft[ii]=gDraft[ii]||{ans:{},findings:[]}; gDraft[ii].findings=gDraft[ii].findings||[]; gDraft[ii].findings.push({by:ukiStaff,loc:"",desc:"",photos:[]}); renderGrandSec(); }
-function gFindLoc(ii,fi,val){ gDraft[ii].findings[fi].loc=val; }
+function gSecSet(ii,v){ gDraft[ii]=gDraft[ii]||{findings:[]}; gDraft[ii].v=v; if((v==="N"||v==="P")&&(!gDraft[ii].findings||!gDraft[ii].findings.length))gDraft[ii].findings=[{desc:"",photos:[]}]; renderGrandSec(); }
+function gAddFinding(ii){ gDraft[ii]=gDraft[ii]||{findings:[]}; gDraft[ii].findings=gDraft[ii].findings||[]; gDraft[ii].findings.push({desc:"",photos:[]}); renderGrandSec(); }
 function gRmFinding(ii,fi){ if(gDraft[ii]&&gDraft[ii].findings){gDraft[ii].findings.splice(fi,1);} renderGrandSec(); }
 function gFindDesc(ii,fi,val){ gDraft[ii].findings[fi].desc=val; }
 async function gFindPhoto(ii,fi,ev){ var files=[].slice.call(ev.target.files||[]); for(var i=0;i<files.length;i++){try{var d=await img2base64(files[i]);gDraft[ii].findings[fi].photos.push(d);}catch(e){}} ev.target.value=""; gRenderThumbs(ii,fi); }
 function gRmFindPhoto(ii,fi,pi){ gDraft[ii].findings[fi].photos.splice(pi,1); gRenderThumbs(ii,fi); }
 function gRenderThumbs(ii,fi){ var box=document.getElementById("gth_"+ii+"_"+fi); if(box)box.innerHTML=gDraft[ii].findings[fi].photos.map(function(u,pi){return '<div class="athumb"><img src="'+u+'"><button onclick="gRmFindPhoto('+ii+','+fi+','+pi+')">×</button></div>';}).join(""); }
 function findingsBlock(ii){
-  var d=gDraft[ii]||{}; var mv=myAns(ii);
-  var all=d.findings||[];
-  var mine=[], others=[];
-  all.forEach(function(f,idx){ if((f.by||ukiStaff)===ukiStaff) mine.push({f:f,idx:idx}); else others.push({f:f,idx:idx}); });
-  var optional=(mv==="Y"||mv==="NA");
-  var lbl = optional ? t("grand_remark") : t("grand_finding");
-  var oth = others.map(function(x){ var f=x.f;
-    return `<div class="gfind gfind-other">
-      <div class="gfind-h"><b>${t("grand_finding")} · ${esc(f.by)}</b><span class="gfind-ro">${t("grand_readonly")}</span></div>
-      ${f.loc?`<div class="gfind-loc">📍 ${esc(f.loc)}</div>`:""}
-      <div class="gfind-otx">${esc(f.desc||"")}</div>
-      <div class="aud-thumbs">${(f.photos||[]).map(function(u){return '<div class="athumb"><img src="'+u+'"></div>';}).join("")}</div>
-    </div>`;
-  }).join("");
-  var othersWrap = others.length ? `<div class="others-note">👀 ${t("grand_others_found")}</div>${oth}` : "";
-  // Before the current user answers: still show others' findings (read-only) to avoid duplicates
-  if(!mv){ return others.length ? `<div class="aud-neg" style="display:block">${othersWrap}</div>` : ""; }
-  var own = mine.map(function(x){ var f=x.f, fi=x.idx;
+  var d=gDraft[ii]||{}; if(!(d.v==="N"||d.v==="P"))return "";
+  var flds=(d.findings||[]).map(function(f,fi){
     return `<div class="gfind">
-      <div class="gfind-h"><b>${lbl} (${t("you_word")})</b><button class="gfind-rm" onclick="gRmFinding(${ii},${fi})">✕</button></div>
-      <input class="gfind-locin" placeholder="📍 ${t("grand_loc_ph")}" value="${esc(f.loc||"")}" oninput="gFindLoc(${ii},${fi},this.value)">
-      <textarea placeholder="${optional?t('grand_remark_ph'):t('aud_finding_ph')}" oninput="gFindDesc(${ii},${fi},this.value)">${esc(f.desc||"")}</textarea>
+      <div class="gfind-h"><b>${t("grand_finding")} ${fi+1}</b><button class="gfind-rm" onclick="gRmFinding(${ii},${fi})">✕</button></div>
+      <textarea placeholder="${t("aud_finding_ph")}" oninput="gFindDesc(${ii},${fi},this.value)">${esc(f.desc||"")}</textarea>
       <div class="photo-btns">
         <label class="pbtn sm"><span>📷</span> ${t("take_photo")}<input type="file" accept="image/*" capture="environment" onchange="gFindPhoto(${ii},${fi},event)"></label>
         <label class="pbtn sm"><span>🖼️</span> ${t("from_gallery")}<input type="file" accept="image/*" multiple onchange="gFindPhoto(${ii},${fi},event)"></label>
@@ -1351,23 +1361,16 @@ function findingsBlock(ii){
       <div class="aud-thumbs" id="gth_${ii}_${fi}">${(f.photos||[]).map(function(u,pi){return '<div class="athumb"><img src="'+u+'"><button onclick="gRmFindPhoto('+ii+','+fi+','+pi+')">×</button></div>';}).join("")}</div>
     </div>`;
   }).join("");
-  if(optional && !mine.length){
-    return `<div class="aud-neg" style="display:block">${othersWrap}<button class="gfind-add opt" onclick="gAddFinding(${ii})">＋ ${t("grand_add_remark")}</button></div>`;
-  }
-  return `<div class="aud-neg" style="display:block">${othersWrap}${own}<button class="gfind-add" onclick="gAddFinding(${ii})">＋ ${optional?t("grand_add_remark"):t("grand_add_finding")}</button></div>`;
+  return `<div class="aud-neg" style="display:block">${flds}<button class="gfind-add" onclick="gAddFinding(${ii})">＋ ${t("grand_add_finding")}</button></div>`;
 }
 function renderGrandSec(){
-  const si=gGroup.si, gi=gGroup.gi, g=AUDIT[si].g[gi];
+  const si=gGroup.si, gi=gGroup.gi, g=curAudit()[si].g[gi];
   const rows=g.i.map(function(txt,ii){
     const d=gDraft[ii]||{};
-    const mv=myAns(ii);
-    const others=itemAnswerList(d).filter(function(a){return a.by && a.by!==ukiStaff;});
-    const othersChips=others.length?`<div class="aud-others">${others.map(function(a){return `<span class="ao-chip">${esc(a.by)}: <b>${a.v}</b></span>`;}).join("")}</div>`:"";
     return `<div class="aud-item">
       <div class="aud-q">${esc(txt)}</div>
       <div class="aud-sel"><select onchange="gSecSet(${ii},this.value)">
-        <option value="">—</option><option value="Y"${mv==='Y'?' selected':''}>Y</option><option value="N"${mv==='N'?' selected':''}>N</option><option value="P"${mv==='P'?' selected':''}>P</option><option value="NA"${mv==='NA'?' selected':''}>NA</option></select></div>
-      ${othersChips}
+        <option value="">—</option><option value="Y"${d.v==='Y'?' selected':''}>Y</option><option value="N"${d.v==='N'?' selected':''}>N</option><option value="P"${d.v==='P'?' selected':''}>P</option><option value="NA"${d.v==='NA'?' selected':''}>NA</option></select></div>
       ${findingsBlock(ii)}</div>`;
   }).join("");
   content.innerHTML=`<div class="view-title">${esc(g.n)}</div>
@@ -1381,75 +1384,61 @@ function renderGrandSec(){
     </div>`;
 }
 async function saveGrandSec(done){
-  const si=gGroup.si, gi=gGroup.gi, g=AUDIT[si].g[gi];
+  const si=gGroup.si, gi=gGroup.gi, g=curAudit()[si].g[gi];
   const key=groupKey(si,gi);
   const data={items:{}};
   const detailLines=[];
   g.i.forEach(function(txt,ii){
     var d=gDraft[ii]||{};
-    var hasAns=d.ans && Object.keys(d.ans).some(function(s){return d.ans[s];});
-    var flist=(d.findings||[]).filter(function(f){return f.desc||f.loc||(f.photos&&f.photos.length);});
-    if(hasAns||flist.length){ data.items[ii]={ans:d.ans||{}, findings:flist}; }
-    var agg=itemAgg(d)||"—";
-    var line=(ii+1)+". ["+agg+"] "+txt;
-    var al=itemAnswerList(d); if(al.length) line+="  ("+al.map(function(a){return (a.by||"?")+"="+a.v;}).join(", ")+")";
-    flist.forEach(function(f){ if(f.desc||f.loc) line+="  |  "+(f.by||"")+": "+(f.loc?("["+f.loc+"] "):"")+(f.desc||""); });
+    if(d.v||(d.findings&&d.findings.length)){
+      data.items[ii]={v:d.v||"",findings:(d.findings||[]).filter(function(f){return f.desc||(f.photos&&f.photos.length);})};
+    }
+    var ans=d.v||"—";
+    var line=(ii+1)+". ["+ans+"] "+txt;
+    if((d.v==="N"||d.v==="P")&&d.findings){ d.findings.forEach(function(f,fi){ if(f.desc)line+="  |  "+t("grand_finding")+" "+(fi+1)+": "+f.desc; }); }
     detailLines.push(line);
   });
   const detail = g.n + "\n" + detailLines.join("\n");
-  // Optimistic: update local state + UI immediately, sync to server in background
-  gSession.claims = gSession.claims || {};
-  gSession.claims[key] = {staff:ukiStaff, status:(done?"done":"progress"), data:data, detail:detail};
-  gMsg = (done?t("grand_sec_done"):t("grand_sec_saved")) + " ⏳";
-  view="grandSecs"; render();
-  api("auditSaveSection",{id:gSession.id,key:key,staff:ukiStaff,data:data,done:done,detail:detail})
-    .then(function(res){
-      if(!res||!res.ok){ toast((res&&res.error)?res.error:t("grand_sync_fail"),true); return; }
-      if(res.claims) gSession.claims=res.claims;
-      if(view==="grandSecs"){ gMsg=""; render(); }   // clear the ⏳ once synced
-    })
-    .catch(function(e){ toast(t("grand_sync_fail"),true); });
+  toast(t("aud_saving"));
+  try{ const res=await api("auditSaveSection",{id:gSession.id,key:key,staff:ukiStaff,data:data,done:done,detail:detail});
+    if(!res||!res.ok){ toast((res&&res.error)?res.error:t("t_failed"),true); return; }
+    gSession.claims=res.claims; gMsg=done?t("grand_sec_done"):t("grand_sec_saved"); view="grandSecs"; render();
+  }catch(e){ toast(e.message||t("t_failed"),true); }
 }
 function grandCompute(){
-  var secs=[], gy=0, gn=0, gp=0, negs=[], allItems=[];
-  AUDIT.forEach(function(sec,si){
+  var secs=[], gy=0, gn=0, gp=0, negs=[];
+  curAudit().forEach(function(sec,si){
     var sy=0,sn=0,sp=0,groups=[];
     sec.g.forEach(function(g,gi){
       var c=gSession.claims[groupKey(si,gi)]; var y=0,n=0,p=0;
-      g.i.forEach(function(txt,ii){ var it=(c&&c.data&&c.data.items)?c.data.items[ii]:null;
-        var v=itemAgg(it)||"—";
-        var byList=it?itemAnswerList(it).map(function(a){return (a.by||"?")+"="+a.v;}).join(", "):"";
-        var flist=(it&&it.findings)||[];
-        var fstr=flist.map(function(f){return (f.by?f.by+": ":"")+(f.loc?"["+f.loc+"] ":"")+(f.desc||"");}).filter(function(s){return s.trim();}).join(" ; ");
-        allItems.push({sec:sec.s,grp:g.n,item:txt,v:v,by:byList,find:fstr});
-        if(v==="Y")y++; else if(v==="P")p++; else if(v==="N")n++;
-        if(v==="N"||v==="P"){ var fs=flist.length?flist:[{desc:"",photos:[],loc:"",by:""}];
-          fs.forEach(function(f){ var note=(f.loc?("📍 "+f.loc+" — "):"")+(f.desc||"")+(f.by?("  ("+f.by+")"):""); negs.push({sec:sec.s,grp:g.n,text:txt+(v==="P"?" (Partial)":""),note:note,photos:f.photos||[]}); }); }
-      });
+      if(c&&c.data&&c.data.items){ g.i.forEach(function(txt,ii){ var it=c.data.items[ii]; if(!it)return;
+        if(it.v==="Y")y++; else if(it.v==="P")p++; else if(it.v==="N")n++;
+        if(it.v==="N"||it.v==="P"){ var fs=it.findings||[]; if(!fs.length)fs=[{desc:"",photos:[]}];
+          fs.forEach(function(f){ negs.push({sec:sec.s,grp:g.n,text:txt+(it.v==="P"?" (Partial)":""),note:f.desc||"",photos:f.photos||[]}); }); }
+      }); }
       var den=y+n+p; var scr=y+0.5*p; groups.push({name:g.n,y:y,n:n,p:p,pct:den?Math.round(scr/den*1000)/10:null}); sy+=y;sn+=n;sp+=p;
     });
     var sden=sy+sn+sp; var sscr=sy+0.5*sp; secs.push({name:sec.s,y:sy,n:sn,p:sp,pct:sden?Math.round(sscr/sden*1000)/10:null,groups:groups}); gy+=sy;gn+=sn;gp+=sp;
   });
   var gden=gy+gn+gp; var gscr=gy+0.5*gp;
-  return {secs:secs,negs:negs,allItems:allItems,overall:gden?Math.round(gscr/gden*1000)/10:0};
+  return {secs:secs,negs:negs,overall:gden?Math.round(gscr/gden*1000)/10:0};
 }
 async function finalizeGrand(){
-  toast(t("aud_saving"));
-  try{ const rs=await api("auditGet",{id:gSession.id}); if(rs&&rs.ok&&rs.session&&rs.session.claims){ gSession.claims=rs.session.claims; } }catch(e){}
   var c=grandCompute();
   if(c.overall===0 && c.negs.length===0){ toast(t("aud_answer_first"),true); return; }
+  toast(t("aud_saving"));
   try{
     var res=await api("auditFinalize",{ id:gSession.id, ward:auditWard, auditor:gSession.dr||gDr, overall:c.overall,
-      performance:auditPerf(c.overall).en, sections:c.secs, negatives:c.negs, allItems:c.allItems });
+      performance:auditPerf(c.overall).en, sections:c.secs, negatives:c.negs });
     if(!res||res.ok!==true){ toast((res&&res.error)?("Save failed: "+res.error):t("t_failed"),true); return; }
     try{const ra=await api("listAudits",{});audits=ra.ok?ra.items:[];}catch(e){}
     toast(t("aud_saved"));
-    openReportWindow(buildAuditReportHTML({ wardLabel:auditWard, overall:c.overall, auditor:gSession.dr||gDr, date:fmtDate(new Date().toISOString()), secs:c.secs, negs:c.negs, allItems:c.allItems }));
+    openReportWindow(buildAuditReportHTML({ wardLabel:auditWard, overall:c.overall, auditor:gSession.dr||gDr, date:fmtDate(new Date().toISOString()), secs:c.secs, negs:c.negs }));
   }catch(e){ toast(e.message||t("t_failed"),true); }
 }
 function auditScore(){
   var secs=[], gy=0, gn=0;
-  AUDIT.forEach(function(sec,si){
+  curAudit().forEach(function(sec,si){
     var sy=0,sn=0,groups=[];
     sec.g.forEach(function(g,gi){
       var y=0,n=0;
@@ -1490,7 +1479,7 @@ function rmAuditPhoto(key,idx){ auditData[key].photos.splice(idx,1);
   if(box) box.innerHTML=auditData[key].photos.map(function(u,i2){return '<div class="athumb"><img src="'+u+'"><button onclick="rmAuditPhoto(\''+key+'\','+i2+')">×</button></div>';}).join("");
 }
 function renderAudit(){
-  var body=AUDIT.map(function(sec,si){
+  var body=curAudit().map(function(sec,si){
     var groups=sec.g.map(function(g,gi){
       var rows=g.i.map(function(txt,ii){
         var key=auditKey(si,gi,ii);
@@ -1530,26 +1519,23 @@ function renderAudit(){
 function auditRec(txt){ return "Ensure "+txt.charAt(0).toLowerCase()+txt.slice(1)+"."; }
 function auditNegatives(){
   var out=[];
-  AUDIT.forEach(function(sec,si){ sec.g.forEach(function(g,gi){ g.i.forEach(function(txt,ii){
+  curAudit().forEach(function(sec,si){ sec.g.forEach(function(g,gi){ g.i.forEach(function(txt,ii){
     var d=auditData[auditKey(si,gi,ii)]||{}; if(d.val==="N") out.push({sec:sec.s,grp:g.n,text:txt,note:d.note||"",photos:d.photos||[]});
   }); }); });
   return out;
 }
 function auditWardLabel(){var zEl=document.getElementById("audZone");return (isED(auditWard)&&zEl)?(auditWard+" — "+zEl.value):auditWard;}
 function auditBadgeCls(pct){var c=auditPerf(pct).cls;return c==="good"?"r":c==="sat"?"a":"p";}
-function openReportWindow(html){ showReportOverlay(html); }
-function showReportOverlay(html){
-  window.__lastReportHTML=html;
-  var ov=document.getElementById("reportOverlay");
-  if(!ov){ ov=document.createElement("div"); ov.id="reportOverlay"; ov.className="report-ov";
-    ov.innerHTML='<div class="ro-bar"><button class="ro-nt" onclick="reportNewTab()">⧉ '+t("report_newtab")+'</button><button class="ro-close" onclick="document.getElementById(\'reportOverlay\').style.display=\'none\'">✕</button></div><iframe id="roFrame"></iframe>';
-    document.body.appendChild(ov);
+function openReportWindow(html){
+  try{
+    var blob=new Blob([html],{type:"text/html;charset=utf-8"});
+    var url=URL.createObjectURL(blob);
+    var w=window.open(url,"_blank");
+    if(!w){ toast(t("aud_popup"),true); return; }
+    setTimeout(function(){ try{URL.revokeObjectURL(url);}catch(e){} }, 60000);
+  }catch(e){
+    var w2=window.open("","_blank"); if(w2){ w2.document.write(html); w2.document.close(); } else { toast(t("aud_popup"),true); }
   }
-  document.getElementById("roFrame").srcdoc=html;
-  ov.style.display="flex";
-}
-function reportNewTab(){
-  try{ var blob=new Blob([window.__lastReportHTML||""],{type:"text/html;charset=utf-8"}); var url=URL.createObjectURL(blob); var w=window.open(url,"_blank"); if(!w){ var w2=window.open("","_blank"); if(w2){w2.document.write(window.__lastReportHTML||"");w2.document.close();} } }catch(e){}
 }
 function buildAuditReportHTML(o){
   var RL=(o.rlang||lang)==='ms'?'ms':'en';
@@ -1627,8 +1613,6 @@ function buildAuditReportHTML(o){
      ${chartHtml}
      <div class="sec"><div class="sh">${rl("Non-Compliant Findings & Recommendations","Penemuan Tidak Patuh & Saranan")}</div>
        <table><thead><tr><th>${rl("No","Bil")}</th><th style="text-align:left">${rl("Finding (Non-compliant item)","Penemuan (Item tidak patuh)")}</th><th>${rl("Recommendation","Saranan")}</th></tr></thead><tbody>${negRows}</tbody></table></div>
-     ${(o.allItems&&o.allItems.length)?`<div class="sec"><div class="sh">${rl("Full Checklist","Senarai Semak Penuh")}</div>
-       <table style="font-size:11px"><thead><tr><th>${rl("No","Bil")}</th><th style="text-align:left">${rl("Item","Item")}</th><th>${rl("Answer","Jawapan")}</th><th style="text-align:left">${rl("By / Findings","Oleh / Penemuan")}</th></tr></thead><tbody>${o.allItems.map(function(x,i){var col=x.v==="N"?"#c0341a":x.v==="P"?"#a06a00":x.v==="Y"?"#137a41":"#888";return '<tr><td>'+(i+1)+'</td><td style="text-align:left"><b>'+esc(x.grp)+'</b><br>'+esc(x.item)+'</td><td style="text-align:center;font-weight:800;color:'+col+'">'+esc(x.v)+'</td><td style="text-align:left;font-size:10.5px">'+esc([x.by,x.find].filter(Boolean).join(" — "))+'</td></tr>';}).join("")}</tbody></table></div>`:""}
      <div class="sec"><div class="sh">${rl("Summary & Recommendation","Ringkasan & Saranan")}</div><div contenteditable="true">Overall IPC compliance for ${esc(o.wardLabel)} is ${o.overall}% (${perf.en}). ${negs.length?("The "+negs.length+" non-compliant item(s) above require corrective action and re-audit at the next Grand IPC Round."):"All applicable items were compliant during this audit."}</div></div>
      <div class="sign"><div class="sblk"><div class="slbl">${rl("Audited by","Diaudit oleh")}:</div><div class="sline"></div><div contenteditable="true">${esc(o.auditor||"")}</div><div class="srole">Infection Prevention &amp; Control Unit, HTPN Kajang</div></div>
        <div class="sblk"><div class="slbl">${rl("Reviewed by","Disemak oleh")}:</div><div class="sline"></div><div contenteditable="true">&nbsp;</div><div class="srole">Head, Infection Control Unit, HTPN Kajang</div></div></div>
@@ -1657,9 +1641,9 @@ function driveNoticeHTML(a){
      </div>
      <div style="background:#fbf3d0;border:1px solid #ecd98f;border-radius:12px;padding:18px;text-align:center;font-size:15px;line-height:1.6">
        📁 <b>Full audit report is not stored in this app.</b><br><br>
-       ${a.driveLink?`Open the full report in Google Drive:<br><a href="${esc(a.driveLink)}" target="_blank" style="font-size:16px;color:#1a6fc4;word-break:break-all">${esc(a.driveLink)}</a>`:`Please search for the complete report in Google Drive:<br><b style="font-size:17px;color:#137a41">${IPC_DRIVE}</b>`}
+       Please search for the complete report in Google Drive:<br>
+       <b style="font-size:17px;color:#137a41">${IPC_DRIVE}</b>
      </div>
-     ${a.driveLink?`<div style="text-align:center;margin-top:14px"><a href="${esc(a.driveLink)}" target="_blank" style="display:inline-block;padding:11px 20px;border-radius:8px;background:#1a6fc4;color:#fff;font-weight:700;text-decoration:none">📁 Open Drive Report</a></div>`:""}
      <div style="text-align:center;margin-top:20px"><button onclick="window.close()" style="padding:10px 20px;border:none;border-radius:8px;background:#137a41;color:#fff;font-weight:700;cursor:pointer">Close</button></div>
    </div></body></html>`;
 }
@@ -1667,7 +1651,7 @@ function openSavedAuditReport(idx){
   var a=audits[idx]; if(!a)return;
   if(!hasAuditData(a)){ openReportWindow(driveNoticeHTML(a)); return; }
   openReportWindow(buildAuditReportHTML({ wardLabel:a.ward, overall:a.overall, auditor:a.auditor,
-    date:a.date, secs:a.sections||[], negs:a.negatives||[], allItems:a.allItems||[] }));
+    date:a.date, secs:a.sections||[], negs:a.negatives||[] }));
 }
 async function saveAudit(){
   var s=auditScore();
@@ -1742,58 +1726,22 @@ function setChartCat(id){ chartCat=id; chartSub=""; render(); }
 function setChartSub(id){ chartSub=id; render(); }
 function goList(f){listFilter=f;view="list";setActive();render();}
 function hasAuditData(a){ return (a.negatives&&a.negatives.length) || (a.sections&&a.sections.some(function(s){return (s.y||0)+(s.n||0)+(s.p||0)>0;})); }
-async function setAuditDrive(idx){
-  var a=audits[idx]; if(!a)return;
-  var el=document.getElementById("dl_"+idx); var link=el?el.value.trim():"";
-  toast(t("aud_saving"));
-  try{ const res=await api("auditSetDriveLink",{ward:a.ward,date:a.date,link:link});
-    if(!res||!res.ok){ toast((res&&res.error)?res.error:t("t_failed"),true); return; }
-    a.driveLink=link; toast(t("drive_saved")); render();
-  }catch(e){ toast(e.message||t("t_failed"),true); }
-}
-async function deleteAuditReport(idx){
-  var a=audits[idx]; if(!a)return;
-  if(!confirm(t("report_del_confirm").replace("{ward}",a.ward))) return;
-  toast(t("aud_saving"));
-  try{ const res=await api("auditDeleteReport",{ward:a.ward,date:a.date});
-    if(!res||!res.ok){ toast((res&&res.error)?res.error:t("t_failed"),true); return; }
-    audits.splice(idx,1);
-    toast(t("report_del_done")); render();
-  }catch(e){ toast(e.message||t("t_failed"),true); }
-}
 function renderAuditList(){
-  const bldBtns=`<div class="cov-mode" style="margin-bottom:8px"><button class="${roundType==='daily'?'on':''}" onclick="setRound('daily')">🗓️ ${t("round_daily")}</button><button class="${roundType==='grand'?'on':''}" onclick="setRound('grand')">📋 ${t("round_grand")}</button></div>`;
-  const bldFilter=`<div class="cov-mode" style="margin-bottom:12px"><button class="${listBld===''?'on':''}" onclick="setListBld('')">${t("f_all_bld")}</button>${BUILDINGS.map(b=>`<button class="${listBld===b.id?'on':''}" onclick="setListBld('${b.id}')">${esc(bldName(b))}</button>`).join("")}</div>`;
-  const inBld=function(w){ if(!listBld)return true; var b=BUILDINGS.find(function(x){return x.id===listBld;}); return b?b.wards.indexOf(wardBase(w))>=0:true; };
-  const ongoing=sessions.filter(s=>s.status!=="finalized" && inBld(s.ward));
-  const ongoingHtml = `<div class="og-h2">🛠 ${t("grand_no_report")} (${ongoing.length})</div>` + (ongoing.length ? `<div class="og-wrap">${ongoing.map(s=>`
-      <div class="og-card">
-        <div class="og-tx"><b>${esc(s.ward)}</b><br><span>${esc(s.dr||'-')} · ${s.done||0}/${s.total||0} ${t("grand_st_done")} · ${esc(s.date)}</span></div>
-        <div class="og-btns"><button class="og-ed" onclick="resumeGrandById('${String(s.id).replace(/'/g,"\\'")}')">✏️ ${t("edit_word")}</button><button class="og-del" onclick="deleteSessionById('${String(s.id).replace(/'/g,"\\'")}')">🗑</button></div>
-      </div>`).join("")}</div>` : `<div class="og-empty">${t("grand_none_ongoing")}</div>`);
-  const fin=audits.filter(a=>inBld(a.ward));
-  const finHtml = `<div class="og-h2" style="margin-top:16px">📄 ${t("grand_has_report")} (${fin.length})</div>` + (fin.length ? fin.map((a)=>{
-    const idx=audits.indexOf(a);
-    const cls=auditBadgeCls(a.overall), perf=auditPerf(a.overall), neg=(a.negatives||[]).length;
-    const sess=sessions.find(function(s){return wardBase(s.ward)===wardBase(a.ward);});
-    const editBtn = sess ? `<button class="og-ed" style="margin-top:6px" onclick="resumeGrandById('${String(sess.id).replace(/'/g,"\\'")}')">✏️ ${t("grand_reedit")}</button>` : "";
-    const driveBtn = a.driveLink ? `<button class="a-line ac-btn" style="margin-top:6px;color:#1a6fc4;border-color:#a8cdf0" onclick="window.open('${String(a.driveLink).replace(/'/g,"\\'")}','_blank')">📁 ${t("drive_open")}</button>` : "";
-    const driveInput = `<div class="drive-row"><input id="dl_${idx}" class="drive-in" placeholder="${t("drive_ph")}" value="${esc(a.driveLink||"")}"><button class="drive-save" onclick="setAuditDrive(${idx})">${t("drive_save")}</button></div>`;
+  const list=audits;
+  const body=list.length? list.map((a,i)=>{
+    const cls=auditBadgeCls(a.overall), perf=auditPerf(a.overall);
+    const neg=(a.negatives||[]).length;
+    const reportBtn = `<button class="a-line ac-btn" onclick="openSavedAuditReport(${i})">📄 ${t("aud_view_report")}</button>`;
     return `<div class="aud-card">
       <div class="ac-top"><div class="ac-ward">${esc(a.ward)}</div>
         <span class="wbadge ${cls}">${a.overall}% · ${lang==='ms'?perf.ms:perf.en}</span></div>
       <div class="ac-meta">${esc(a.date)} · ${t("by_word")} ${esc(a.auditor||"-")} · <b>${neg}</b> ${t("aud_neg")}</div>
-      <button class="a-line ac-btn" onclick="openSavedAuditReport(${idx})">📄 ${t("aud_view_report")}</button>
-      ${driveBtn}
-      ${editBtn}
-      ${driveInput}
-      <button class="a-line" style="margin-top:6px;color:#c0341a;border-color:#f0b3a8;width:100%;padding:9px" onclick="deleteAuditReport(${idx})">🗑 ${t("report_del")}</button>
+      ${reportBtn}
     </div>`;
-  }).join("") : `<div class="og-empty">${t("aud_none_yet")}</div>`);
+  }).join("") : `<div class="empty"><div class="ic">📋</div><p>${t("aud_none_yet")}</p></div>`;
   content.innerHTML=`<div class="view-title">${t("audit_title")}</div>
-    ${bldBtns}${bldFilter}
-    ${ongoingHtml}
-    ${finHtml}`;
+    <div class="round-note" style="margin-bottom:10px">📋 ${t("round_grand")} — ${t("aud_list_hint")}</div>
+    ${body}`;
 }
 
 function renderList(){
@@ -1816,9 +1764,7 @@ function renderList(){
   if(curWard)filtered=filtered.filter(x=>wardBase(x.wad)===curWard);
   const body=filtered.length?`<div class="list">${filtered.map(cardHTML).join("")}</div>`
     :`<div class="empty"><div class="ic">📋</div><p>${t("empty_view")}</p></div>`;
-  const roundToggle = isUKI ? `<div class="cov-mode" style="margin-bottom:10px"><button class="${roundType==='daily'?'on':''}" onclick="setRound('daily')">🗓️ ${t("round_daily")}</button><button class="${roundType==='grand'?'on':''}" onclick="setRound('grand')">📋 ${t("round_grand")}</button></div>` : "";
-  const reportBtn = isUKI ? `<button class="btn-report" onclick="exportReport()">${t("btn_report")}</button>` : "";
-  content.innerHTML=`<div class="view-title">${t("list_title")}</div>${roundToggle}<div class="toolbar">${statusSel}${bldSel}${wardSel}${reportBtn}</div>${body}`;
+  content.innerHTML=`<div class="view-title">${t("list_title")}</div><div class="toolbar">${statusSel}${bldSel}${wardSel}<button class="btn-report" onclick="exportReport()">${t("btn_report")}</button></div>${body}`;
 }
 function setListBld(id){ listBld=id; curWard=""; render(); }
 function applyWard(){curWard=document.getElementById("fWard").value;render();}
@@ -2411,6 +2357,7 @@ let toastT;function toast(m,e){const t=document.getElementById("toast");t.textCo
 
 updateLangUI();applyLoginText();
 if(!DEMO)demoHint.style.display="none";
+updateOfflineBadge();
 
 /* Splash: auto-dismiss after 3s */
 setTimeout(()=>{const s=document.getElementById("splash");if(s){s.classList.add("hide");setTimeout(()=>s.remove(),650);}},3000);

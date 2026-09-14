@@ -1363,7 +1363,7 @@ async function gFindPhoto(ii,fi,ev){ var files=[].slice.call(ev.target.files||[]
 function gRmFindPhoto(ii,fi,pi){ gDraft[ii].findings[fi].photos.splice(pi,1); gRenderThumbs(ii,fi); }
 function gRenderThumbs(ii,fi){ var box=document.getElementById("gth_"+ii+"_"+fi); if(box)box.innerHTML=gDraft[ii].findings[fi].photos.map(function(u,pi){return '<div class="athumb"><img src="'+u+'"><button onclick="gRmFindPhoto('+ii+','+fi+','+pi+')">×</button></div>';}).join(""); }
 function findingsBlock(ii){
-  var d=gDraft[ii]||{}; if(!(d.v==="N"||d.v==="P"))return "";
+  var d=gDraft[ii]||{};
   var flds=(d.findings||[]).map(function(f,fi){
     return `<div class="gfind">
       <div class="gfind-h"><b>${t("grand_finding")} ${fi+1}</b><button class="gfind-rm" onclick="gRmFinding(${ii},${fi})">✕</button></div>
@@ -1746,16 +1746,43 @@ function renderAuditList(){
     const cls=auditBadgeCls(a.overall), perf=auditPerf(a.overall);
     const neg=(a.negatives||[]).length;
     const reportBtn = `<button class="a-line ac-btn" onclick="openSavedAuditReport(${i})">📄 ${t("aud_view_report")}</button>`;
+    const driveBtn = a.driveLink
+      ? `<a class="a-line ac-btn" href="${esc(a.driveLink)}" target="_blank" rel="noopener">📁 ${lang==='ms'?'Buka di Drive':'Open in Drive'}</a>
+         <button class="a-line ac-btn" onclick="promptDriveLink(${i})">✏️ ${lang==='ms'?'Tukar pautan':'Edit link'}</button>`
+      : `<button class="a-line ac-btn" onclick="promptDriveLink(${i})">🔗 ${lang==='ms'?'Tambah pautan Drive':'Add Drive link'}</button>`;
     return `<div class="aud-card">
       <div class="ac-top"><div class="ac-ward">${esc(a.ward)}</div>
         <span class="wbadge ${cls}">${a.overall}% · ${lang==='ms'?perf.ms:perf.en}</span></div>
       <div class="ac-meta">${esc(a.date)} · ${t("by_word")} ${esc(a.auditor||"-")} · <b>${neg}</b> ${t("aud_neg")}</div>
       ${reportBtn}
+      ${driveBtn}
     </div>`;
   }).join("") : `<div class="empty"><div class="ic">📋</div><p>${t("aud_none_yet")}</p></div>`;
+  const modeToggle=`<div class="cov-mode"><button class="${roundType==='daily'?'on':''}" onclick="setRound('daily')">🗓️ ${t("round_daily")}</button><button class="${roundType==='grand'?'on':''}" onclick="setRound('grand')">📋 ${t("round_grand")}</button></div>`;
   content.innerHTML=`<div class="view-title">${t("audit_title")}</div>
+    ${modeToggle}
     <div class="round-note" style="margin-bottom:10px">📋 ${t("round_grand")} — ${t("aud_list_hint")}</div>
     ${body}`;
+}
+// Attach/replace the Google Drive link for a finalized report (e.g. after it's printed,
+// signed by Dr Zaila and scanned back up to Drive) so it can be opened straight from the app.
+async function promptDriveLink(i){
+  var a=audits[i]; if(!a) return;
+  var cur=a.driveLink||"";
+  var url=prompt(lang==='ms'
+    ? "Tampal pautan Google Drive untuk laporan bertandatangan ini:"
+    : "Paste the Google Drive link for this signed report:", cur);
+  if(url===null) return; // cancelled
+  url=url.trim();
+  if(url && !/^https?:\/\//i.test(url)){ toast(lang==='ms'?"Pautan tidak sah — mesti bermula dengan http/https.":"Invalid link — must start with http/https.", true); return; }
+  toast(t("aud_saving"));
+  try{
+    var res=await api("auditSetDriveLink",{ward:a.ward, date:a.date, link:url});
+    if(!res||res.ok!==true){ toast((res&&res.error)?res.error:t("t_failed"), true); return; }
+    a.driveLink=url;
+    toast(url ? (lang==='ms'?"Pautan Drive disimpan.":"Drive link saved.") : (lang==='ms'?"Pautan Drive dibuang.":"Drive link removed."));
+    render();
+  }catch(e){ toast(e.message||t("t_failed"), true); }
 }
 
 function renderList(){
@@ -1778,7 +1805,8 @@ function renderList(){
   if(curWard)filtered=filtered.filter(x=>wardBase(x.wad)===curWard);
   const body=filtered.length?`<div class="list">${filtered.map(cardHTML).join("")}</div>`
     :`<div class="empty"><div class="ic">📋</div><p>${t("empty_view")}</p></div>`;
-  content.innerHTML=`<div class="view-title">${t("list_title")}</div><div class="toolbar">${statusSel}${bldSel}${wardSel}<button class="btn-report" onclick="exportReport()">${t("btn_report")}</button></div>${body}`;
+  const modeToggle=isUKI?`<div class="cov-mode"><button class="${roundType==='daily'?'on':''}" onclick="setRound('daily')">🗓️ ${t("round_daily")}</button><button class="${roundType==='grand'?'on':''}" onclick="setRound('grand')">📋 ${t("round_grand")}</button></div>`:"";
+  content.innerHTML=`<div class="view-title">${t("list_title")}</div>${modeToggle}<div class="toolbar">${statusSel}${bldSel}${wardSel}<button class="btn-report" onclick="exportReport()">${t("btn_report")}</button></div>${body}`;
 }
 function setListBld(id){ listBld=id; curWard=""; render(); }
 function applyWard(){curWard=document.getElementById("fWard").value;render();}

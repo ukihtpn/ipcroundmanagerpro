@@ -940,14 +940,14 @@ function offQPush(action,payload){
 async function _apiCall(action,payload={}){
   let res;
   const ctrl=new AbortController();
-  const timer=setTimeout(()=>ctrl.abort(),20000);
+  const timer=setTimeout(()=>ctrl.abort(),28000);
   try{
     res=await fetch(CONFIG.GAS_URL,{method:"POST",redirect:"follow",signal:ctrl.signal,
       headers:{"Content-Type":"text/plain;charset=utf-8"},body:JSON.stringify({action,...payload})});
   }catch(err){
     clearTimeout(timer);
     console.error("IPC Round API network error ("+action+"):",err);
-    if(err.name==="AbortError") throw new Error(lang==='ms'?"Sambungan terlalu lambat (>20s) — cuba lagi.":"Connection too slow (>20s) — please try again.");
+    if(err.name==="AbortError") throw new Error(lang==='ms'?"Server terlalu lambat bertindak balas — cuba lagi.":"Server took too long to respond — please try again.");
     throw new Error(lang==='ms'?"Tiada sambungan ke server. Semak internet & cuba lagi.":"Can't reach the server. Check your internet and try again.");
   }
   clearTimeout(timer);
@@ -1067,7 +1067,10 @@ async function doLogin(){
   btn.disabled=true;btn.textContent=t("checking");
   try{const res=await api("login",{username,password});
     if(res.ok){
-      try{ if(rememberMe.checked) localStorage.setItem("ipc_user",username); else localStorage.removeItem("ipc_user"); }catch(e){}
+      try{
+        if(rememberMe.checked){ localStorage.setItem("ipc_user",username); localStorage.setItem("ipc_session",JSON.stringify({user:res.user})); }
+        else{ localStorage.removeItem("ipc_user"); localStorage.removeItem("ipc_session"); }
+      }catch(e){}
       user=res.user;startApp();
     }else{errEl.textContent=res.error;errEl.classList.remove("hidden");}}
   catch(e){errEl.textContent=e.message||t("err_conn");errEl.classList.remove("hidden");}
@@ -1091,8 +1094,13 @@ function showStaffPicker(){
       <p class="staff-sub">${t("staff_pick_sub")}</p>
       <div class="staff-grid">${cards}</div></div>`;
 }
-function pickStaff(name){ ukiStaff=name; nav.style.display=""; applyChrome(); view="dash"; loadList(); }
-function logout(){user=null;items=[];refs=null;view="dash";curWard="";listFilter="";selBuilding="";ukiStaff="";nav.style.display="";app.classList.add("hidden");loginScreen.classList.remove("hidden");uname.value="";upass.value="";}
+function pickStaff(name){
+  ukiStaff=name; nav.style.display=""; applyChrome(); view="dash"; loadList();
+  try{ const raw=localStorage.getItem("ipc_session"); if(raw){ const s=JSON.parse(raw); s.ukiStaff=name; localStorage.setItem("ipc_session",JSON.stringify(s)); } }catch(e){}
+}
+function logout(){user=null;items=[];refs=null;view="dash";curWard="";listFilter="";selBuilding="";ukiStaff="";nav.style.display="";app.classList.add("hidden");loginScreen.classList.remove("hidden");uname.value="";upass.value="";
+  try{ localStorage.removeItem("ipc_session"); }catch(e){}
+}
 
 function buildNav(){
   const tabs=user.role==="UKI"
@@ -2469,6 +2477,15 @@ let toastT;function toast(m,e){const t=document.getElementById("toast");t.textCo
 updateLangUI();applyLoginText();
 if(!DEMO)demoHint.style.display="none";
 updateOfflineBadge();
+if(!DEMO){ try{ api("ping",{}).catch(function(){}); }catch(e){} }
+(function bootFromSavedSession(){
+  try{
+    const raw=localStorage.getItem("ipc_session");
+    if(!raw) return;
+    const s=JSON.parse(raw);
+    if(s && s.user){ user=s.user; ukiStaff=s.ukiStaff||""; startApp(); }
+  }catch(e){}
+})();
 
 /* Splash: auto-dismiss after 3s */
 setTimeout(()=>{const s=document.getElementById("splash");if(s){s.classList.add("hide");setTimeout(()=>s.remove(),650);}},3000);

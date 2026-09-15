@@ -1115,18 +1115,14 @@ function switchView(v){view=v;setActive();render();}
 async function loadList(){
   content.innerHTML='<div class="loading"><div class="spin"></div>'+t("loading")+'</div>';
   const isUKI=user.role==="UKI";
-  const tasks=[ api("list",{role:user.role,ward:user.ward}).then(r=>({k:"items",r:r})).catch(e=>({k:"items",err:e})) ];
+  const p1=api("list",{role:user.role,ward:user.ward}).then(function(r){
+    items=(r&&r.ok)?r.items:[]; if(!(r&&r.ok)) toast(t("t_fail_load"),true); render();
+  }).catch(function(e){ items=[]; toast(e.message||t("t_fail_load"),true); render(); });
   if(isUKI){
-    tasks.push(api("listAudits",{}).then(r=>({k:"audits",r:r})).catch(e=>({k:"audits",err:e})));
-    tasks.push(api("listSessions",{}).then(r=>({k:"sessions",r:r})).catch(e=>({k:"sessions",err:e})));
+    api("listAudits",{}).then(function(r){ audits=(r&&r.ok)?r.items:[]; render(); }).catch(function(){});
+    api("listSessions",{}).then(function(r){ sessions=(r&&r.ok)?r.items:[]; render(); }).catch(function(){});
   }
-  const results=await Promise.all(tasks);
-  results.forEach(function(x){
-    if(x.k==="items"){ items=(x.r&&x.r.ok)?x.r.items:[]; if(x.err||!(x.r&&x.r.ok)) toast((x.err&&x.err.message)||t("t_fail_load"),true); }
-    else if(x.k==="audits"){ audits=(x.r&&x.r.ok)?x.r.items:[]; }
-    else if(x.k==="sessions"){ sessions=(x.r&&x.r.ok)?x.r.items:[]; }
-  });
-  render();
+  await p1;
 }
 function counts(){const total=items.length;const baru=items.filter(x=>x.status==="Baru").length;const done=items.filter(x=>x.status!=="Baru").length;return {total,baru,done};}
 function fmtDate(v){
@@ -1331,7 +1327,10 @@ async function deleteGrandSession(id){
 let gDr="", gSession=null, gGroup=null, gDraft={}, gMsg="";
 function groupKey(si,gi){return "s"+si+"g"+gi;}
 const GRAND_DRS=["Dr Aneesa","Dr Saihah"];
-function openAudit(w){ auditWard=w; gDr=""; gSession=null; gGroup=null; view="grandDr"; setActive(); render(); }
+function openAudit(w){
+  auditWard=w; gDr=""; gSession=null; gGroup=null; view="grandDr"; setActive(); render();
+  if(!DEMO){ try{ api("ping",{}).catch(function(){}); }catch(e){} }
+}
 function renderGrandDr(){
   const cards=STAFF.filter(function(s){return GRAND_DRS.indexOf(s.name)>=0;}).map(function(s){
     return `<div class="staff-card" onclick="pickGrandDr('${s.name.replace(/'/g,"\\'")}')"><img src="${s.img}" alt="${esc(s.name)}"><div class="staff-name">${esc(s.name)}</div></div>`;
@@ -1389,8 +1388,7 @@ function renderGrandSecs(){
     ${summary}
     <div class="grand-note">${t("grand_save_note")}</div>
     ${secsHtml}
-    ${isDr?`<div class="aud-actions"><button class="btn" onclick="finalizeGrand()">📄 ${t("grand_finalize")}</button></div>`
-          :`<div class="cov-note">${t("grand_dr_only")} ${esc(gSession?gSession.dr:gDr)}.</div>`}`;
+    <div class="aud-actions"><button class="btn" onclick="finalizeGrand()">📄 ${t("grand_finalize")}</button></div>`;
 }
 function grandWhoList(){
   if(!gSession||!gSession.claims)return "";

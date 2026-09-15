@@ -1494,13 +1494,14 @@ function itemAggAns(item){
   return "";
 }
 function grandCompute(){
-  var secs=[], gy=0, gn=0, gp=0, negs=[];
+  var secs=[], gy=0, gn=0, gp=0, negs=[], answered=0;
   curAudit().forEach(function(sec,si){
     var sy=0,sn=0,sp=0,groups=[];
     sec.g.forEach(function(g,gi){
       var c=gSession.claims[groupKey(si,gi)]; var y=0,n=0,p=0;
       if(c&&c.data&&c.data.items){ g.i.forEach(function(txt,ii){ var it=c.data.items[ii]; if(!it)return;
         var av=itemAggAns(it);
+        if(av)answered++;
         if(av==="Y")y++; else if(av==="P")p++; else if(av==="N")n++;
         if(av==="N"||av==="P"){ var fs=it.findings||[]; if(!fs.length)fs=[{loc:"",desc:"",photos:[]}];
           fs.forEach(function(f){ negs.push({sec:sec.s,grp:g.n,text:txt+(av==="P"?" (Partial)":""),note:(f.loc?"["+f.loc+"] ":"")+(f.desc||""),photos:f.photos||[]}); }); }
@@ -1510,11 +1511,11 @@ function grandCompute(){
     var sden=sy+sn+sp; var sscr=sy+0.5*sp; secs.push({name:sec.s,y:sy,n:sn,p:sp,pct:sden?Math.round(sscr/sden*1000)/10:null,groups:groups}); gy+=sy;gn+=sn;gp+=sp;
   });
   var gden=gy+gn+gp; var gscr=gy+0.5*gp;
-  return {secs:secs,negs:negs,overall:gden?Math.round(gscr/gden*1000)/10:0};
+  return {secs:secs,negs:negs,answered:answered,overall:gden?Math.round(gscr/gden*1000)/10:0};
 }
 async function finalizeGrand(){
   var c=grandCompute();
-  if(c.overall===0 && c.negs.length===0){ toast(t("aud_answer_first"),true); return; }
+  if(c.answered===0){ toast(t("aud_answer_first"),true); return; }
   toast(t("aud_saving"));
   try{
     var res=await api("auditFinalize",{ id:gSession.id, ward:auditWard, auditor:gSession.dr||gDr, overall:c.overall,

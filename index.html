@@ -940,7 +940,7 @@ function offQPush(action,payload){
 async function _apiCall(action,payload={}){
   let res;
   const ctrl=new AbortController();
-  const timer=setTimeout(()=>ctrl.abort(),28000);
+  const timer=setTimeout(()=>ctrl.abort(),15000);
   try{
     res=await fetch(CONFIG.GAS_URL,{method:"POST",redirect:"follow",signal:ctrl.signal,
       headers:{"Content-Type":"text/plain;charset=utf-8"},body:JSON.stringify({action,...payload})});
@@ -1037,6 +1037,16 @@ function demoApi(action,p){return new Promise(r=>setTimeout(()=>{
   else if(action==="saveAudit"){demoAudits.unshift({ward:p.ward,auditor:p.auditor,overall:p.overall,performance:p.performance,sections:p.sections||[],negatives:p.negatives||[],date:today+" "+new Date().toTimeString().slice(0,5)});r({ok:true});}
   else if(action==="listAudits"){r({ok:true,items:JSON.parse(JSON.stringify(demoAudits))});}
   else if(action==="listSessions"){var out=[];Object.keys(demoSessions).forEach(function(id){var s=demoSessions[id];var done=0,total=0;Object.keys(s.claims).forEach(function(k){total++;if(s.claims[k].status==="done")done++;});out.push({id:s.id,ward:s.ward,dr:s.dr,date:s.date,status:s.status,done:done,total:total});});r({ok:true,items:out});}
+  else if(action==="dashboardData"){
+    let d=JSON.parse(JSON.stringify(demoDB));if(p.role==="WARD")d=d.filter(x=>x.wad===p.ward);
+    let out={ok:true,items:d,audits:[],sessions:[]};
+    if(p.role==="UKI"){
+      out.audits=JSON.parse(JSON.stringify(demoAudits));
+      var ss=[]; Object.keys(demoSessions).forEach(function(id){var s=demoSessions[id];var done=0,total=0;Object.keys(s.claims).forEach(function(k){total++;if(s.claims[k].status==="done")done++;});ss.push({id:s.id,ward:s.ward,dr:s.dr,date:s.date,status:s.status,done:done,total:total});});
+      out.sessions=ss;
+    }
+    r(out);
+  }
   else if(action==="auditDeleteSession"){if(demoSessions[p.id]){if(demoSessions[p.id].status==="finalized"){r({ok:false,error:"Cannot delete a finalized session."});}else{delete demoSessions[p.id];r({ok:true});}}else{r({ok:false,error:"Session not found."});}}
   else if(action==="auditStart"){var id=p.ward+"|"+today;if(!demoSessions[id])demoSessions[id]={id:id,ward:p.ward,dr:p.dr||"",date:today,status:"open",claims:{}};else if(!demoSessions[id].dr&&p.dr)demoSessions[id].dr=p.dr;r({ok:true,session:JSON.parse(JSON.stringify(demoSessions[id]))});}
   else if(action==="auditGet"){var s=demoSessions[p.id];r(s?{ok:true,session:JSON.parse(JSON.stringify(s))}:{ok:false,error:"Session not found."});}
@@ -1113,16 +1123,18 @@ function setActive(){[...nav.children].forEach(b=>b.classList.toggle("active",b.
 function switchView(v){view=v;setActive();render();}
 
 async function loadList(){
-  content.innerHTML='<div class="loading"><div class="spin"></div>'+t("loading")+'</div>';
-  const isUKI=user.role==="UKI";
-  const p1=api("list",{role:user.role,ward:user.ward}).then(function(r){
-    items=(r&&r.ok)?r.items:[]; if(!(r&&r.ok)) toast(t("t_fail_load"),true); render();
-  }).catch(function(e){ items=[]; toast(e.message||t("t_fail_load"),true); render(); });
-  if(isUKI){
-    api("listAudits",{}).then(function(r){ audits=(r&&r.ok)?r.items:[]; render(); }).catch(function(){});
-    api("listSessions",{}).then(function(r){ sessions=(r&&r.ok)?r.items:[]; render(); }).catch(function(){});
-  }
-  await p1;
+  content.innerHTML='<div class="loading"><div class="spin"></div>'+t("loading")+'</div><div id="loadSlowHint" style="text-align:center;margin-top:14px;display:none"></div>';
+  const slowTimer=setTimeout(function(){
+    const el=document.getElementById("loadSlowHint");
+    if(el) el.innerHTML='<p style="color:var(--muted);font-size:12.5px;margin-bottom:8px">'+(lang==="ms"?"Sambungan perlahan — masih cuba...":"Connection is slow — still trying...")+'</p><button class="pend-btn" onclick="loadList()">🔄 '+(lang==="ms"?"Cuba semula":"Try again")+'</button>', el.style.display="block";
+  }, 7000);
+  try{
+    const r=await api("dashboardData",{role:user.role,ward:user.ward});
+    if(r&&r.ok){ items=r.items||[]; audits=r.audits||[]; sessions=r.sessions||[]; }
+    else { items=[]; audits=[]; sessions=[]; toast(t("t_fail_load"),true); }
+  }catch(e){ items=[]; audits=[]; sessions=[]; toast(e.message||t("t_fail_load"),true); }
+  render();
+  clearTimeout(slowTimer);
 }
 function counts(){const total=items.length;const baru=items.filter(x=>x.status==="Baru").length;const done=items.filter(x=>x.status!=="Baru").length;return {total,baru,done};}
 function fmtDate(v){
@@ -1408,7 +1420,7 @@ async function claimGroup(si,gi){
     const c=gSession.claims[key];
     if(c&&c.data&&c.data.items){ Object.keys(c.data.items).forEach(function(ii){
       var it=JSON.parse(JSON.stringify(c.data.items[ii]));
-      it.v = (it.ans && it.ans[ukiStaff]!==undefined) ? it.ans[ukiStaff] : "";
+      it.v = (it.ans && it.ans[ukiStaff]!==undefined) ? it.ans[ukiStaff] : itemAggAns(it);
       gDraft[ii]=it;
     }); }
     view="grandSec"; render();
@@ -1514,9 +1526,10 @@ function grandCompute(){
   return {secs:secs,negs:negs,answered:answered,overall:gden?Math.round(gscr/gden*1000)/10:0};
 }
 async function finalizeGrand(){
+  toast(t("aud_saving"));
+  try{ const rf=await api("auditGet",{id:gSession.id}); if(rf&&rf.ok) gSession=rf.session; }catch(e){}
   var c=grandCompute();
   if(c.answered===0){ toast(t("aud_answer_first"),true); return; }
-  toast(t("aud_saving"));
   try{
     var res=await api("auditFinalize",{ id:gSession.id, ward:auditWard, auditor:gSession.dr||gDr, overall:c.overall,
       performance:auditPerf(c.overall).en, sections:c.secs, negatives:c.negs });
@@ -2476,14 +2489,16 @@ let toastT;function toast(m,e){const t=document.getElementById("toast");t.textCo
 updateLangUI();applyLoginText();
 if(!DEMO)demoHint.style.display="none";
 updateOfflineBadge();
-if(!DEMO){ try{ api("ping",{}).catch(function(){}); }catch(e){} }
-(function bootFromSavedSession(){
+(function boot(){
+  var bootedFromSession=false;
   try{
     const raw=localStorage.getItem("ipc_session");
-    if(!raw) return;
-    const s=JSON.parse(raw);
-    if(s && s.user){ user=s.user; ukiStaff=s.ukiStaff||""; startApp(); }
+    if(raw){
+      const s=JSON.parse(raw);
+      if(s && s.user){ user=s.user; ukiStaff=s.ukiStaff||""; startApp(); bootedFromSession=true; }
+    }
   }catch(e){}
+  if(!bootedFromSession && !DEMO){ try{ api("ping",{}).catch(function(){}); }catch(e){} }
 })();
 
 /* Splash: auto-dismiss after 3s */

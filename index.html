@@ -199,6 +199,8 @@ html{color-scheme:light}
 .answer p{font-size:13.5px;color:#38455a}
 .answer .by{font-size:11px;color:var(--muted);margin-top:6px}
 .thread{margin-top:10px;display:flex;flex-direction:column;gap:8px}
+.tw-sel{display:flex;align-items:center;gap:6px;margin-top:8px;font-size:12px;color:#c0392b;cursor:pointer}
+.tw-sel input{cursor:pointer}
 .tw{border-radius:10px;padding:10px 12px;border-left:3px solid var(--line)}
 .tw.tward{background:var(--green-bg);border-left-color:var(--green)}
 .tw.tu{background:var(--amber-bg);border-left-color:var(--amber)}
@@ -1417,7 +1419,7 @@ function renderGrandSecs(){
     ${summary}
     <div class="grand-note">${t("grand_save_note")}</div>
     ${secsHtml}
-    <div class="aud-actions"><button class="btn" onclick="finalizeGrand()">📄 ${t("grand_finalize")}</button></div>`;
+    <div class="aud-actions"><button class="btn" id="finalizeBtn" onclick="finalizeGrand(this)">📄 ${t("grand_finalize")}</button></div>`;
 }
 function grandWhoList(){
   if(!gSession||!gSession.claims)return "";
@@ -1542,19 +1544,22 @@ function grandCompute(){
   var gden=gy+gn+gp; var gscr=gy+0.5*gp;
   return {secs:secs,negs:negs,answered:answered,overall:gden?Math.round(gscr/gden*1000)/10:0};
 }
-async function finalizeGrand(){
+async function finalizeGrand(btn){
+  if(btn){ btn.disabled=true; btn.dataset.orig=btn.innerHTML; btn.innerHTML='⏳ '+(lang==='ms'?'Menjana laporan…':'Generating report…'); }
+  const restore=function(){ if(btn){ btn.disabled=false; btn.innerHTML=btn.dataset.orig; } };
   toast(t("aud_saving"));
   try{ const rf=await api("auditGet",{id:gSession.id}); if(rf&&rf.ok) gSession=rf.session; }catch(e){}
   var c=grandCompute();
-  if(c.answered===0){ toast(t("aud_answer_first"),true); return; }
+  if(c.answered===0){ toast(t("aud_answer_first"),true); restore(); return; }
   try{
     var res=await api("auditFinalize",{ id:gSession.id, ward:auditWard, auditor:gSession.dr||gDr, overall:c.overall,
       performance:auditPerf(c.overall).en, sections:c.secs, negatives:c.negs });
-    if(!res||res.ok!==true){ toast((res&&res.error)?("Save failed: "+res.error):t("t_failed"),true); return; }
+    if(!res||res.ok!==true){ toast((res&&res.error)?("Save failed: "+res.error):t("t_failed"),true); restore(); return; }
     try{const ra=await api("listAudits",{});audits=ra.ok?ra.items:[];}catch(e){}
     toast(t("aud_saved"));
     openReportWindow(buildAuditReportHTML({ wardLabel:auditWard, overall:c.overall, auditor:gSession.dr||gDr, date:fmtDate(new Date().toISOString()), secs:c.secs, negs:c.negs }));
-  }catch(e){ toast(e.message||t("t_failed"),true); }
+    restore();
+  }catch(e){ toast(e.message||t("t_failed"),true); restore(); }
 }
 function auditScore(){
   var secs=[], gy=0, gn=0;
@@ -2087,22 +2092,48 @@ function evRow(arr){arr=normEv(arr);if(!arr.length)return"";
     const ic=e.kind==="pdf"?"📄":"🔗",lbl=e.kind==="pdf"?"PDF File":"Drive Link";
     return `<a class="ev-chip" href="${e.url}" target="_blank" rel="noopener">${ic} ${lbl}</a>`;}).join("")}</div>`;}
 
-function threadHTML(it){
+let threadSel={};
+function threadHTML(it, editable){
   let entries = (it.thread&&it.thread.length)?it.thread:[];
+  let legacy=false;
   // backward compat: no thread but has legacy action
   if(!entries.length && it.tindakan){
     entries=[{by:"WARD",name:it.dijawabOleh||("Ward "+it.wad),text:it.tindakan,evidence:it.evidence||[],date:it.tarikhJawab}];
     if(it.catatanUKI) entries.push({by:"UKI",name:"IPC",text:it.catatanUKI,evidence:[],date:it.tarikhJawab});
+    legacy=true;
   }
   if(!entries.length) return "";
-  return `<div class="thread">${entries.map((e,idx)=>{
+  const canEdit = !!editable && !legacy;
+  const rows=entries.map((e,idx)=>{
     const isU=e.by==="UKI";
     const lbl=isU?((idx===entries.length-1&&it.status==="Selesai")?t("lab_ipc_verified"):t("lab_ipc_feedback")):t("lab_ward_action");
+    const cb=canEdit?`<label class="tw-sel"><input type="checkbox" onchange="toggleThreadSel('${it.id}',${idx},this.checked)"> ${lang==='ms'?'Pilih untuk padam':'Select to delete'}</label>`:"";
     return `<div class="tw ${isU?"tu":"tward"}">
       <div class="tlab">${lbl}</div>
       <p>${esc(e.text)}</p>${evRow(e.evidence)}
-      <div class="by">${esc(e.name||"")}${e.date?" · "+esc(fmtDate(e.date)):""}</div></div>`;
-  }).join("")}</div>`;
+      <div class="by">${esc(e.name||"")}${e.date?" · "+esc(fmtDate(e.date)):""}</div>${cb}</div>`;
+  }).join("");
+  const delBtn=canEdit?`<button class="a-del" id="delThreadBtn_${it.id}" style="display:none;margin-top:8px" onclick="deleteSelectedThread('${it.id}')">🗑 ${lang==='ms'?'Padam entri dipilih':'Delete selected entries'}</button>`:"";
+  return `<div class="thread">${rows}</div>${delBtn}`;
+}
+function toggleThreadSel(id,idx,checked){
+  threadSel[id]=threadSel[id]||new Set();
+  if(checked)threadSel[id].add(idx); else threadSel[id].delete(idx);
+  const n=threadSel[id].size, btn=document.getElementById("delThreadBtn_"+id);
+  if(btn){ btn.style.display=n?"":"none"; btn.textContent="🗑 "+(lang==='ms'?("Padam "+n+" entri dipilih"):("Delete "+n+" selected")); }
+}
+async function deleteSelectedThread(id){
+  const sel=threadSel[id]; if(!sel||!sel.size)return;
+  const n=sel.size;
+  if(!confirm(lang==='ms'?("Padam "+n+" entri terpilih? Tindakan ini tak boleh dibatalkan."):("Delete "+n+" selected entries? This cannot be undone.")))return;
+  toast(t("aud_saving"));
+  try{
+    const res=await api("deleteThreadEntries",{id:id,indices:Array.from(sel)});
+    if(!res||!res.ok){ toast((res&&res.error)?res.error:t("t_failed"),true); return; }
+    delete threadSel[id];
+    toast(lang==='ms'?"Entri dipadam.":"Entries deleted.");
+    await loadList();
+  }catch(e){ toast(e.message||t("t_failed"),true); }
 }
 function cardHTML(it){
   const isUKI=user.role==="UKI";
@@ -2132,7 +2163,7 @@ function cardHTML(it){
       <div class="item-body">
         ${photoRow(it.gambarPenemuan)}${ageBadge}
         ${it.recommendation?`<div class="rec-box"><div class="rec-h">💡 ${t("rec_label")}</div><p>${esc(it.recommendation)}</p></div>`:""}
-        ${threadHTML(it)}
+        ${threadHTML(it, isUKI)}
         ${btns?`<div class="actions">${btns}</div>`:""}
       </div>
     </div></div>`;

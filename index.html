@@ -1771,7 +1771,69 @@ function buildAuditReportHTML(o){
        <div class="sblk"><div class="slbl">${rl("Reviewed by","Disemak oleh")}:</div><div class="sline"></div><div contenteditable="true">&nbsp;</div><div class="srole">Head, Infection Control Unit, HTPN Kajang</div></div></div>
    </div>
    <script>
-   function saveWord(){var doc=document.querySelector('.doc').cloneNode(true);doc.querySelectorAll('[contenteditable]').forEach(function(e){e.removeAttribute('contenteditable');});var pp=document.getElementById('pp');if(pp&&!pp.checked){doc.querySelectorAll('.imgs').forEach(function(e){e.remove();});}doc.querySelectorAll('.chartbox').forEach(function(e){var s=e.parentNode;if(s&&s.classList.contains('sec'))s.remove();else e.remove();});var css="body{font-family:Calibri,Arial,sans-serif;font-size:11pt;color:#1f2a24}table{border-collapse:collapse;width:100%}th,td{border:1px solid #444;padding:6px;vertical-align:top}th{background:#cfe8d8}.imgs img{width:150px;height:auto;margin:0 6px 6px 0}.sh{font-weight:bold;color:#137a41}.sblk{display:inline-block;width:45%;vertical-align:top;margin-right:4%}";var html="<html xmlns:o='urn:schemas-microsoft-com:office:office' xmlns:w='urn:schemas-microsoft-com:office:word' xmlns='http://www.w3.org/TR/REC-html40'><head><meta charset=\\"utf-8\\"><style>"+css+"</style></head><body>"+doc.outerHTML+"</body></html>";var blob=new Blob([String.fromCharCode(65279)+html],{type:'application/msword'});var a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download='IPC-Audit-Report.doc';document.body.appendChild(a);a.click();a.remove();}
+   function svgToPngDataUrl(svg){
+     return new Promise(function(resolve){
+       try{
+         var vb=(svg.getAttribute('viewBox')||'').split(/\s+/).map(Number);
+         var w=vb.length===4?vb[2]:(svg.clientWidth||800);
+         var h=vb.length===4?vb[3]:(svg.clientHeight||280);
+         var xml=new XMLSerializer().serializeToString(svg);
+         if(!/^<svg[^>]+xmlns=/.test(xml)) xml=xml.replace('<svg','<svg xmlns="http://www.w3.org/2000/svg"');
+         var svgUrl='data:image/svg+xml;charset=utf-8,'+encodeURIComponent(xml);
+         var img=new Image();
+         img.onload=function(){
+           try{
+             var scale=2;
+             var cvs=document.createElement('canvas'); cvs.width=w*scale; cvs.height=h*scale;
+             var ctx=cvs.getContext('2d');
+             ctx.fillStyle='#ffffff'; ctx.fillRect(0,0,cvs.width,cvs.height);
+             ctx.scale(scale,scale);
+             ctx.drawImage(img,0,0,w,h);
+             resolve({url:cvs.toDataURL('image/png'),w:w,h:h});
+           }catch(e){ resolve(null); }
+         };
+         img.onerror=function(){ resolve(null); };
+         img.src=svgUrl;
+       }catch(e){ resolve(null); }
+     });
+   }
+   async function saveWord(){
+     var doc=document.querySelector('.doc').cloneNode(true);
+     doc.querySelectorAll('[contenteditable]').forEach(function(e){e.removeAttribute('contenteditable');});
+     var pp=document.getElementById('pp');
+     if(pp&&!pp.checked){doc.querySelectorAll('.imgs').forEach(function(e){e.remove();});}
+     var boxes=doc.querySelectorAll('.chartbox');
+     for(var i=0;i<boxes.length;i++){
+       var box=boxes[i]; var svg=box.querySelector('svg');
+       if(!svg){ continue; }
+       var png=await svgToPngDataUrl(svg);
+       if(png){
+         var img=document.createElement('img');
+         img.src=png.url; img.style.width='100%'; img.style.maxWidth=png.w+'px'; img.setAttribute('width',png.w); img.setAttribute('height',png.h);
+         box.innerHTML=''; box.appendChild(img);
+       } else {
+         var sec=box.parentNode; if(sec&&sec.classList.contains('sec')) sec.remove(); else box.remove();
+       }
+     }
+     var css="body{font-family:Calibri,Arial,sans-serif;font-size:11pt;color:#1f2a24}"
+       +".rhead{text-align:center;margin-bottom:14px}.hosp{font-weight:bold;font-size:14pt}.rtitle{font-weight:bold;font-size:14pt;margin-top:2px}"
+       +".meta2 div{margin:4px 0}"
+       +".sec{margin:16px 0}.sh{font-weight:bold;color:#137a41;text-decoration:underline;margin-bottom:6px}"
+       +".scorebox{border:2px solid #137a41;border-radius:10px;padding:12px 16px;margin:12px 0}"
+       +".scorebox .big{font-size:26pt;font-weight:bold;display:inline-block;margin-right:16px;vertical-align:middle}"
+       +".good,.p-good{color:#137a41}.sat,.p-sat{color:#8a6d00}.low,.p-low{color:#d9531e}"
+       +"table{width:100%;border-collapse:collapse;margin:10px 0}th,td{border:1px solid #444;padding:7px;vertical-align:top;text-align:left}"
+       +"th{background:#cfe8d8;font-weight:bold;text-align:center}.secrow td{background:#eef6f0}"
+       +"td.cno{width:34px;text-align:center;font-weight:bold}td.crec{width:33%}"
+       +".fmeta{font-size:9pt;color:#666;margin-bottom:4px}.ftxt{margin-bottom:5px}.fresp{font-size:10pt;margin-top:5px}"
+       +".imgs img{width:150px;height:auto;margin:0 6px 6px 0}"
+       +".chartbox img{border:1px solid #ddd}"
+       +".sign{margin-top:36px}.sblk{display:inline-block;width:45%;vertical-align:top;margin-right:4%}.slbl{margin-bottom:34px}.sline{border-bottom:1px solid #333;margin-bottom:4px}.srole{font-size:9pt;color:#555}";
+     var html="<html xmlns:o='urn:schemas-microsoft-com:office:office' xmlns:w='urn:schemas-microsoft-com:office:word' xmlns='http://www.w3.org/TR/REC-html40'><head><meta charset=\\"utf-8\\"><style>"+css+"</style></head><body>"+doc.outerHTML+"</body></html>";
+     var blob=new Blob([String.fromCharCode(65279)+html],{type:'application/msword'});
+     var a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download='IPC-Audit-Report.doc';document.body.appendChild(a);a.click();a.remove();
+     setTimeout(function(){URL.revokeObjectURL(a.href);},2000);
+   }
    <\/script></body></html>`;
 }
 function openAuditReport(){

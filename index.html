@@ -216,6 +216,7 @@ html{color-scheme:light}
 .a-primary{background:var(--teal);color:#fff}.a-primary:hover{background:var(--teal-d)}
 .a-green{background:var(--green);color:#fff}.a-green:hover{background:#12683f}
 .a-line{background:#fff;color:var(--muted);border:1.5px solid var(--line)}.a-line:hover{background:#f6f8fa}
+.a-line.danger{border-color:#f3b4ab;color:#c0392b}.a-line.danger:hover{background:#fdf1ef}
 .a-del{background:#fff;color:var(--red);border:1.5px solid var(--red)}.a-del:hover{background:#fdecea}
 .a-wa{background:#25d366;color:#fff;border:none}.a-wa:hover{background:#1eb457}
 .leg-row{display:inline-flex;align-items:center;gap:6px;margin-right:14px;font-size:13px}
@@ -1551,7 +1552,7 @@ function itemAggAns(item){
   return "";
 }
 function grandCompute(){
-  var secs=[], gy=0, gn=0, gp=0, negs=[], answered=0;
+  var secs=[], gy=0, gn=0, gp=0, negs=[], evid=[], answered=0;
   curAudit().forEach(function(sec,si){
     var sy=0,sn=0,sp=0,groups=[];
     sec.g.forEach(function(g,gi){
@@ -1560,15 +1561,23 @@ function grandCompute(){
         var av=itemAggAns(it);
         if(av)answered++;
         if(av==="Y")y++; else if(av==="P")p++; else if(av==="N")n++;
-        if(av==="N"||av==="P"){ var fs=it.findings||[]; if(!fs.length)fs=[{loc:"",desc:"",photos:[]}];
+        var fs=it.findings||[];
+        var hasPhoto=fs.some(function(f){return (f.photos||[]).length>0;});
+        if(av==="N"||av==="P"){ if(!fs.length)fs=[{loc:"",desc:"",photos:[]}];
           fs.forEach(function(f){ negs.push({sec:sec.s,grp:g.n,text:txt+(av==="P"?" (Partial)":""),note:(f.loc?"["+f.loc+"] ":"")+(f.desc||""),photos:f.photos||[]}); }); }
+        else if(hasPhoto){
+          // Compliant (Y) item but has photo(s) attached — keep for the report's separate
+          // "photo evidence" section so all photos are included, without counting it as
+          // a non-compliant finding.
+          fs.forEach(function(f){ if((f.photos||[]).length) evid.push({sec:sec.s,grp:g.n,text:txt+" (Bukti Foto — Patuh)",note:(f.loc?"["+f.loc+"] ":"")+(f.desc||""),photos:f.photos||[]}); });
+        }
       }); }
       var den=y+n+p; var scr=y+0.5*p; groups.push({name:g.n,y:y,n:n,p:p,pct:den?Math.round(scr/den*1000)/10:null}); sy+=y;sn+=n;sp+=p;
     });
     var sden=sy+sn+sp; var sscr=sy+0.5*sp; secs.push({name:sec.s,y:sy,n:sn,p:sp,pct:sden?Math.round(sscr/sden*1000)/10:null,groups:groups}); gy+=sy;gn+=sn;gp+=sp;
   });
   var gden=gy+gn+gp; var gscr=gy+0.5*gp;
-  return {secs:secs,negs:negs,answered:answered,overall:gden?Math.round(gscr/gden*1000)/10:0};
+  return {secs:secs,negs:negs,evid:evid,answered:answered,overall:gden?Math.round(gscr/gden*1000)/10:0};
 }
 async function finalizeGrand(btn){
   if(btn){ btn.disabled=true; btn.dataset.orig=btn.innerHTML; btn.innerHTML='⏳ '+(lang==='ms'?'Menjana laporan…':'Generating report…'); }
@@ -1579,11 +1588,11 @@ async function finalizeGrand(btn){
   if(c.answered===0){ toast(t("aud_answer_first"),true); restore(); return; }
   try{
     var res=await api("auditFinalize",{ id:gSession.id, ward:auditWard, auditor:gSession.dr||gDr, overall:c.overall,
-      performance:auditPerf(c.overall).en, sections:c.secs, negatives:c.negs });
+      performance:auditPerf(c.overall).en, sections:c.secs, negatives:c.negs, evidence:c.evid });
     if(!res||res.ok!==true){ toast((res&&res.error)?("Save failed: "+res.error):t("t_failed"),true); restore(); return; }
     try{const ra=await api("listAudits",{});audits=ra.ok?ra.items:[];}catch(e){}
     toast(t("aud_saved"));
-    openReportWindow(buildAuditReportHTML({ wardLabel:auditWard, overall:c.overall, auditor:gSession.dr||gDr, date:fmtDate(new Date().toISOString()), secs:c.secs, negs:c.negs }));
+    openReportWindow(buildAuditReportHTML({ wardLabel:auditWard, overall:c.overall, auditor:gSession.dr||gDr, date:fmtDate(new Date().toISOString()), secs:c.secs, negs:c.negs, evid:c.evid }));
     restore();
   }catch(e){ toast(e.message||t("t_failed"),true); restore(); }
 }
@@ -1724,6 +1733,14 @@ function buildAuditReportHTML(o){
       <td contenteditable="true"><div class="fmeta">${esc(x.sec)} &middot; ${esc(x.grp)}</div><div class="ftxt">${esc(itemText(x.text,RL))}</div>${x.note?'<div class="fresp"><b>Note:</b> '+esc(x.note)+'</div>':''}${imgs?'<div class="imgs">'+imgs+'</div>':''}</td>
       <td class="crec" contenteditable="true">${esc(auditRec(itemText(x.text,RL)))}</td></tr>`;
   }).join(""):`<tr><td colspan="3" style="text-align:center;color:#137a41;padding:16px">${t("aud_all_compliant")}</td></tr>`;
+  var evid=o.evid||[];
+  var evidRows=evid.length?evid.map(function(x,i){
+    var imgs=(x.photos||[]).map(function(u){return '<img src="'+esc(u)+'" referrerpolicy="no-referrer" width="150" height="150" style="object-fit:cover">';}).join("");
+    return `<tr><td class="cno">${i+1}</td>
+      <td><div class="fmeta">${esc(x.sec)} &middot; ${esc(x.grp)}</div><div class="ftxt">${esc(itemText(x.text,RL))}</div>${x.note?'<div class="fresp"><b>Note:</b> '+esc(x.note)+'</div>':''}${imgs?'<div class="imgs">'+imgs+'</div>':''}</td></tr>`;
+  }).join(""):"";
+  var evidSection=evid.length?`<div class="sec"><div class="sh">${rl("Additional Photo Evidence (Compliant Items)","Bukti Foto Tambahan (Item Patuh)")}</div>
+       <div style="overflow-x:auto"><table><thead><tr><th>${rl("No","Bil")}</th><th style="text-align:left">${rl("Item","Item")}</th></tr></thead><tbody>${evidRows}</tbody></table></div></div>`:"";
   var comp=(o.secs||[]).reduce(function(a,s){return a+(s.y||0);},0);
   var applicable=(o.secs||[]).reduce(function(a,s){return a+(s.y||0)+(s.n||0);},0);
   var noncomp=(o.secs||[]).reduce(function(a,s){return a+(s.n||0);},0);
@@ -1766,6 +1783,7 @@ function buildAuditReportHTML(o){
      ${chartHtml}
      <div class="sec"><div class="sh">${rl("Non-Compliant Findings & Recommendations","Penemuan Tidak Patuh & Saranan")}</div>
        <div style="overflow-x:auto"><table><thead><tr><th>${rl("No","Bil")}</th><th style="text-align:left">${rl("Finding (Non-compliant item)","Penemuan (Item tidak patuh)")}</th><th>${rl("Recommendation","Saranan")}</th></tr></thead><tbody>${negRows}</tbody></table></div></div>
+     ${evidSection}
      <div class="sec"><div class="sh">${rl("Summary & Recommendation","Ringkasan & Saranan")}</div><div contenteditable="true">Overall IPC compliance for ${esc(o.wardLabel)} is ${o.overall}% (${perf.en}). ${negs.length?("The "+negs.length+" non-compliant item(s) above require corrective action and re-audit at the next Grand IPC Round."):"All applicable items were compliant during this audit."}</div></div>
      <div class="sign"><div class="sblk"><div class="slbl">${rl("Audited by","Diaudit oleh")}:</div><div class="sline"></div><div contenteditable="true">${esc(o.auditor||"")}</div><div class="srole">Infection Prevention &amp; Control Unit, HTPN Kajang</div></div>
        <div class="sblk"><div class="slbl">${rl("Reviewed by","Disemak oleh")}:</div><div class="sline"></div><div contenteditable="true">&nbsp;</div><div class="srole">Head, Infection Control Unit, HTPN Kajang</div></div></div>
@@ -1932,7 +1950,7 @@ function openSavedAuditReport(idx){
   var a=audits[idx]; if(!a)return;
   if(!hasAuditData(a)){ openReportWindow(driveNoticeHTML(a)); return; }
   openReportWindow(buildAuditReportHTML({ wardLabel:a.ward, overall:a.overall, auditor:a.auditor,
-    date:a.date, secs:a.sections||[], negs:a.negatives||[] }));
+    date:a.date, secs:a.sections||[], negs:a.negatives||[], evid:a.photoEvidence||[] }));
 }
 async function saveAudit(){
   var s=auditScore();
@@ -2023,11 +2041,15 @@ function renderAuditList(){
       ? `<a class="a-line ac-btn" href="${esc(a.driveLink)}" target="_blank" rel="noopener">📁 ${lang==='ms'?'Buka di Drive':'Open in Drive'}</a>
          <button class="a-line ac-btn" onclick="promptDriveLink(${i})">✏️ ${lang==='ms'?'Tukar pautan':'Edit link'}</button>`
       : `<button class="a-line ac-btn" onclick="promptDriveLink(${i})">🔗 ${lang==='ms'?'Tambah pautan Drive':'Add Drive link'}</button>`;
+    const editBtn = `<button class="a-line ac-btn" onclick="editSavedAudit(${i})">✏️ ${lang==='ms'?'Edit audit':'Edit audit'}</button>`;
+    const delBtn = `<button class="a-line ac-btn danger" onclick="deleteSavedAudit(${i})">🗑️ ${lang==='ms'?'Padam':'Delete'}</button>`;
     return `<div class="aud-card">
       <div class="ac-top"><div class="ac-ward">${esc(a.ward)}</div>
         <span class="wbadge ${cls}">${a.overall}% · ${lang==='ms'?perf.ms:perf.en}</span></div>
       <div class="ac-meta">${esc(a.date)} · ${t("by_word")} ${esc(a.auditor||"-")} · <b>${neg}</b> ${t("aud_neg")}</div>
       ${reportBtn}
+      ${editBtn}
+      ${delBtn}
       ${driveBtn}
     </div>`;
   }).join("") : `<div class="empty"><div class="ic">📋</div><p>${t("aud_none_yet")}</p></div>`;
@@ -2054,6 +2076,38 @@ async function promptDriveLink(i){
     if(!res||res.ok!==true){ toast((res&&res.error)?res.error:t("t_failed"), true); return; }
     a.driveLink=url;
     toast(url ? (lang==='ms'?"Pautan Drive disimpan.":"Drive link saved.") : (lang==='ms'?"Pautan Drive dibuang.":"Drive link removed."));
+    render();
+  }catch(e){ toast(e.message||t("t_failed"), true); }
+}
+// Open a saved (finalized) Grand Round report for further editing — resumes the SAME
+// underlying session (by its exact ward+date id), so it re-opens with all existing
+// answers/findings/photos intact rather than starting a new blank session for today.
+// After editing, re-run "Finalize" (or ask IPC to re-run the refinalize script) so the
+// saved report reflects the changes.
+function editSavedAudit(i){
+  var a=audits[i]; if(!a) return;
+  var dayOnly=String(a.date||"").slice(0,10);
+  var id=a.ward+"|"+dayOnly;
+  resumeGrand(id);
+}
+// Permanently delete a saved Grand Round report row (Audits sheet) — matched by ward + date.
+// This does NOT delete the underlying session/answers in "AuditSessions" or the "GR <ward>
+// <date>" sheet — only the finalized report entry shown here. Use editSavedAudit/resumeGrand
+// (or auditDeleteSession from the Dashboard pending list) to manage the session itself.
+async function deleteSavedAudit(i){
+  var a=audits[i]; if(!a) return;
+  if(!confirm((lang==='ms'
+    ? "Padam laporan tersimpan ini?\n"
+    : "Delete this saved report?\n")+a.ward+" · "+a.date+
+    (lang==='ms'
+      ? "\n\nIni memadam baris laporan sahaja (bukan jawapan/sesi asal). Tindakan ini tidak boleh dibatalkan."
+      : "\n\nThis only deletes the saved report row (not the underlying session/answers). This cannot be undone."))) return;
+  toast(t("aud_saving"));
+  try{
+    var res=await api("auditDeleteReport",{ward:a.ward, date:a.date});
+    if(!res||res.ok!==true){ toast((res&&res.error)?res.error:t("t_failed"), true); return; }
+    try{const ra=await api("listAudits",{});audits=ra.ok?ra.items:[];}catch(e){}
+    toast(lang==='ms'?"Laporan dipadam.":"Report deleted.");
     render();
   }catch(e){ toast(e.message||t("t_failed"), true); }
 }

@@ -1832,6 +1832,34 @@ function buildAuditReportHTML(o){
        +".imgs img{width:150px;height:auto;margin:0 6px 6px 0}"
        +".chartbox img{border:1px solid #ddd}"
        +".sign{margin-top:36px}.sblk{display:inline-block;width:45%;vertical-align:top;margin-right:4%}.slbl{margin-bottom:34px}.sline{border-bottom:1px solid #333;margin-bottom:4px}.srole{font-size:9pt;color:#555}";
+     // Saved findings' photos are stored as Google Drive links (not data: URIs) once an audit is saved.
+     // Word tries to fetch those live and usually fails ("linked image cannot be displayed"), so pull the
+     // actual bytes down first and turn them into data: URIs too, with a clickable-link fallback if that fails.
+     var remoteImgs=Array.prototype.slice.call(doc.querySelectorAll('img[src^="http"]'));
+     for(var ri=0; ri<remoteImgs.length; ri++){
+       var rim=remoteImgs[ri]; var rurl=rim.getAttribute('src'); var dataUrl=null;
+       try{
+         var res=await fetch(rurl,{mode:'cors'});
+         if(res.ok){
+           var blb=await res.blob();
+           dataUrl=await new Promise(function(resolve){
+             var fr=new FileReader();
+             fr.onload=function(){resolve(fr.result);};
+             fr.onerror=function(){resolve(null);};
+             fr.readAsDataURL(blb);
+           });
+         }
+       }catch(e){ dataUrl=null; }
+       if(dataUrl){
+         rim.setAttribute('src', dataUrl);
+       } else {
+         var lnk=document.createElement('a');
+         lnk.href=rurl; lnk.target='_blank'; lnk.rel='noopener';
+         lnk.textContent='\\ud83d\\udcf7 View photo / Lihat gambar';
+         lnk.style.cssText='display:inline-block;margin:0 6px 6px 0;color:#137a41;font-weight:bold';
+         rim.replaceWith(lnk);
+       }
+     }
      // Word cannot display data: URIs as inline <img> (shows "linked image cannot be displayed").
      // So pull every data-URI image out into its own MIME part and reference it by a plain filename instead.
      var mimeParts=[]; var cnt=0;

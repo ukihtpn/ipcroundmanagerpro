@@ -1797,6 +1797,9 @@ function buildAuditReportHTML(o){
        }catch(e){ resolve(null); }
      });
    }
+   function _bytesToBase64(bytes){var bin='';for(var i=0;i<bytes.length;i++){bin+=String.fromCharCode(bytes[i]);}return btoa(bin);}
+   function _utf8Base64(str){return _bytesToBase64(new TextEncoder().encode(str));}
+   function _mimeChunk(b64){var out='';for(var i=0;i<b64.length;i+=76){out+=b64.substr(i,76)+'\\r\\n';}return out;}
    async function saveWord(){
      var doc=document.querySelector('.doc').cloneNode(true);
      doc.querySelectorAll('[contenteditable]').forEach(function(e){e.removeAttribute('contenteditable');});
@@ -1829,8 +1832,43 @@ function buildAuditReportHTML(o){
        +".imgs img{width:150px;height:auto;margin:0 6px 6px 0}"
        +".chartbox img{border:1px solid #ddd}"
        +".sign{margin-top:36px}.sblk{display:inline-block;width:45%;vertical-align:top;margin-right:4%}.slbl{margin-bottom:34px}.sline{border-bottom:1px solid #333;margin-bottom:4px}.srole{font-size:9pt;color:#555}";
+     // Word cannot display data: URIs as inline <img> (shows "linked image cannot be displayed").
+     // So pull every data-URI image out into its own MIME part and reference it by a plain filename instead.
+     var mimeParts=[]; var cnt=0;
+     doc.querySelectorAll('img[src^="data:"]').forEach(function(im){
+       var m=/^data:([^;,]+)(?:;charset=[^;,]+)?;base64,([\\s\\S]*)$/.exec(im.getAttribute('src')||'');
+       if(!m) return;
+       cnt++;
+       var mime=m[1]; var b64=m[2];
+       var ext = mime.indexOf('png')>=0?'png':(mime.indexOf('jpeg')>=0||mime.indexOf('jpg')>=0)?'jpg':(mime.indexOf('gif')>=0?'gif':'img');
+       var fname='image'+cnt+'.'+ext;
+       mimeParts.push({name:fname, mime:mime, b64:b64});
+       im.setAttribute('src', fname);
+     });
      var html="<html xmlns:o='urn:schemas-microsoft-com:office:office' xmlns:w='urn:schemas-microsoft-com:office:word' xmlns='http://www.w3.org/TR/REC-html40'><head><meta charset=\\"utf-8\\"><style>"+css+"</style></head><body>"+doc.outerHTML+"</body></html>";
-     var blob=new Blob([String.fromCharCode(65279)+html],{type:'application/msword'});
+     var blob;
+     if(mimeParts.length){
+       var boundary='----=_NextPart_'+Date.now().toString(16)+Math.random().toString(16).slice(2);
+       var out=[];
+       out.push('MIME-Version: 1.0\\r\\n');
+       out.push('Content-Type: multipart/related; boundary=\\"'+boundary+'\\"\\r\\n\\r\\n');
+       out.push('--'+boundary+'\\r\\n');
+       out.push('Content-Type: text/html; charset=\\"utf-8\\"\\r\\n');
+       out.push('Content-Location: report.htm\\r\\n');
+       out.push('Content-Transfer-Encoding: base64\\r\\n\\r\\n');
+       out.push(_mimeChunk(_utf8Base64(html)));
+       mimeParts.forEach(function(p){
+         out.push('\\r\\n--'+boundary+'\\r\\n');
+         out.push('Content-Type: '+p.mime+'\\r\\n');
+         out.push('Content-Location: '+p.name+'\\r\\n');
+         out.push('Content-Transfer-Encoding: base64\\r\\n\\r\\n');
+         out.push(_mimeChunk(p.b64));
+       });
+       out.push('\\r\\n--'+boundary+'--\\r\\n');
+       blob=new Blob(out,{type:'application/msword'});
+     } else {
+       blob=new Blob([String.fromCharCode(65279)+html],{type:'application/msword'});
+     }
      var a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download='IPC-Audit-Report.doc';document.body.appendChild(a);a.click();a.remove();
      setTimeout(function(){URL.revokeObjectURL(a.href);},2000);
    }

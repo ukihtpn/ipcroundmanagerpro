@@ -353,6 +353,13 @@ html{color-scheme:light}
 .gs-bar{background:#eef1f0;border-radius:6px;height:8px;overflow:hidden;margin-bottom:8px}
 .gs-bar div{height:100%;background:linear-gradient(90deg,#137a41,#28a860);border-radius:6px}
 .gs-who{font-size:12px;color:var(--muted)}.gs-person{margin:2px 0}.gs-none{font-style:italic}
+.g-others{font-size:12px;background:#eef5f0;border:1px solid #cfe8d8;border-radius:8px;padding:6px 9px;margin:6px 0;line-height:1.6}
+.g-others b{color:#137a41}.g-others b.N{color:#b02a2a}.g-others b.P{color:#b8860b}
+.g-ofind{border:1px dashed #cfd8d3;border-radius:8px;padding:8px;margin-bottom:8px;background:#fafcfb;font-size:12.5px}
+.g-ofind .g-ofind-h{font-size:11.5px;color:#5a6b62;font-weight:700;margin-bottom:3px}
+.g-mylbl{font-size:11.5px;font-weight:700;color:#137a41;margin:6px 0 3px}
+.g-upd{font-size:11.5px;color:#5a6b62;text-align:center;margin:-4px 0 10px}
+.g-warn{background:#fdecea;border:1px solid #f5c2bd;color:#8a1f17;border-radius:9px;padding:9px 12px;font-size:12.5px;margin-bottom:10px;font-weight:600}
 .gfind{border:1px solid #f3d6cc;border-radius:8px;padding:9px;margin-bottom:8px;background:#fff}
 .gfind-h{display:flex;justify-content:space-between;align-items:center;font-size:12px;margin-bottom:6px;color:var(--ink)}
 .gfind-rm{background:none;border:none;color:#d9531e;font-weight:800;cursor:pointer;font-size:14px}
@@ -954,7 +961,24 @@ const OFFQ_KEY="ipcround_offline_queue_v1";
 function offQLoad(){ try{ return JSON.parse(localStorage.getItem(OFFQ_KEY)||"[]"); }catch(e){ return []; } }
 function offQSave(q){ try{ localStorage.setItem(OFFQ_KEY,JSON.stringify(q)); }catch(e){ /* storage full/unavailable — nothing else we can do */ } }
 function offQCount(){ return offQLoad().length; }
+// Same section + same auditor saved again while still offline: merge into ONE pending save
+// (newer answers win) instead of queueing two, so an older copy can never be replayed after a
+// newer one. The merged entry gets a fresh qid so a flush already sending the old copy can't
+// delete the new one.
+function offQSectionMatch(e,id,key,staff){ return e && e.action==="auditSaveSection" && e.payload && e.payload.id===id && e.payload.key===key && e.payload.staff===staff; }
+function offQSectionItems(id,key,staff){
+  let items={}; offQLoad().forEach(function(e){ if(offQSectionMatch(e,id,key,staff)) items=Object.assign(items,(e.payload.data&&e.payload.data.items)||{}); });
+  return items;
+}
+function offQRemoveSection(id,key,staff){ offQSave(offQLoad().filter(function(e){return !offQSectionMatch(e,id,key,staff);})); updateOfflineBadge(); }
 function offQPush(action,payload){
+  if(action==="auditSaveSection" && payload){
+    const prevItems=offQSectionItems(payload.id,payload.key,payload.staff);
+    const merged=Object.assign({},payload,{data:{items:Object.assign({},prevItems,(payload.data&&payload.data.items)||{})}});
+    const q2=offQLoad().filter(function(e){return !offQSectionMatch(e,payload.id,payload.key,payload.staff);});
+    q2.push({qid:"q"+Date.now()+Math.random().toString(36).slice(2,7), action:action, payload:merged, ts:Date.now()});
+    offQSave(q2); updateOfflineBadge(); return;
+  }
   const q=offQLoad();
   // A staff member tapping Submit repeatedly while offline queues the same write each time,
   // and every copy would then replay when the connection returns — which is how one ward
@@ -971,17 +995,21 @@ function offQPush(action,payload){
   updateOfflineBadge();
 }
 // One raw network call — used both for live sends and for flushing the queue
+// Saves that upload photos and rewrite the session sheet regularly take longer than 15 s on
+// Apps Script. Cutting them off early made the app say "not saved" while the server was in
+// fact still saving — so long writes now get 60 s.
+const LONG_ACTIONS=["add","respond","requestMore","auditSaveSection","auditFinalize","saveAudit","auditImportFromSheet"];
 async function _apiCall(action,payload={}){
   let res;
   const ctrl=new AbortController();
-  const timer=setTimeout(()=>ctrl.abort(),15000);
+  const timer=setTimeout(()=>ctrl.abort(),LONG_ACTIONS.indexOf(action)>=0?60000:20000);
   try{
     res=await fetch(CONFIG.GAS_URL,{method:"POST",redirect:"follow",signal:ctrl.signal,
       headers:{"Content-Type":"text/plain;charset=utf-8"},body:JSON.stringify({action,...payload})});
   }catch(err){
     clearTimeout(timer);
     console.error("IPC Round API network error ("+action+"):",err);
-    if(err.name==="AbortError") throw new Error(lang==='ms'?"Server terlalu lambat bertindak balas — cuba lagi.":"Server took too long to respond — please try again.");
+    if(err.name==="AbortError"){ const te=new Error(lang==='ms'?"Server terlalu lambat bertindak balas — cuba lagi.":"Server took too long to respond — please try again."); te.timeout=true; throw te; }
     throw new Error(lang==='ms'?"Tiada sambungan ke server. Semak internet & cuba lagi.":"Can't reach the server. Check your internet and try again.");
   }
   clearTimeout(timer);
@@ -997,7 +1025,11 @@ async function _apiCall(action,payload={}){
 // without the person having to notice and tap "try again" themselves.
 async function _apiCallRetry(action,payload){
   try{ return await _apiCall(action,payload); }
-  catch(err){ await new Promise(r=>setTimeout(r,900)); return await _apiCall(action,payload); }
+  catch(err){
+    // After a timeout the server may STILL be saving — resending would race the first copy.
+    if(err && err.timeout) throw err;
+    await new Promise(r=>setTimeout(r,900)); return await _apiCall(action,payload);
+  }
 }
 // In-flight lock: if the exact same action+payload is already being sent, reuse that
 // same request instead of firing a second one — stops duplicate sends from a double-tap.
@@ -1028,12 +1060,17 @@ async function flushOfflineQueue(){
   if(_offQFlushing || !navigator.onLine) return;
   const q=offQLoad(); if(!q.length) return;
   _offQFlushing=true;
-  let sent=0;
+  let sent=0; const sentIds={};
   for(let i=0;i<q.length;i++){
-    try{ await _apiCall(q[i].action,q[i].payload); sent++; }
+    try{
+      const r=await _apiCall(q[i].action,q[i].payload);
+      if(r && r.ok===false && r.busy) break;   // server busy (lock) — keep it, retry later
+      sent++; sentIds[q[i].qid]=1;
+    }
     catch(err){ break; } // still failing — leave this and the rest queued, try again later
   }
-  offQSave(q.slice(sent));
+  // Remove only what was actually sent: anything queued WHILE we were flushing must survive.
+  offQSave(offQLoad().filter(function(e){ return !sentIds[e.qid]; }));
   _offQFlushing=false;
   updateOfflineBadge();
   // Re-fetch, not just re-render: the queued writes have only now reached the sheet, and the
@@ -1043,6 +1080,7 @@ async function flushOfflineQueue(){
     toast(lang==='ms'?(sent+" item tertangguh berjaya dihantar."):(sent+" pending item(s) sent."));
     if(user && typeof loadList==="function"){ try{ await loadList(); }catch(e){ if(typeof render==="function") render(); } }
     else if(typeof render==="function") render();
+    if(gSession && (view==="grandSecs") && typeof refreshSession==="function") refreshSession(true);
   }
 }
 function updateOfflineBadge(){
@@ -1100,8 +1138,8 @@ function demoApi(action,p){return new Promise(r=>setTimeout(()=>{
   else if(action==="auditDeleteSession"){if(demoSessions[p.id]){if(demoSessions[p.id].status==="finalized"){r({ok:false,error:"Cannot delete a finalized session."});}else{delete demoSessions[p.id];r({ok:true});}}else{r({ok:false,error:"Session not found."});}}
   else if(action==="auditStart"){var id=p.ward+"|"+today;if(!demoSessions[id])demoSessions[id]={id:id,ward:p.ward,dr:p.dr||"",date:today,status:"open",claims:{}};else if(!demoSessions[id].dr&&p.dr)demoSessions[id].dr=p.dr;r({ok:true,session:JSON.parse(JSON.stringify(demoSessions[id]))});}
   else if(action==="auditGet"){var s=demoSessions[p.id];r(s?{ok:true,session:JSON.parse(JSON.stringify(s))}:{ok:false,error:"Session not found."});}
-  else if(action==="auditClaim"){var s=demoSessions[p.id];if(!s){r({ok:false,error:"Session not found."});}else{var c=s.claims[p.key];if(c&&c.staff&&c.staff!==p.staff&&c.status!=="done"){r({ok:false,error:"Locked by "+c.staff,claims:JSON.parse(JSON.stringify(s.claims))});}else{if(!c)s.claims[p.key]={staff:p.staff,status:"progress",data:null};else{c.staff=p.staff;if(c.status==="done")c.status="progress";}r({ok:true,claims:JSON.parse(JSON.stringify(s.claims))});}}}
-  else if(action==="auditSaveSection"){var s=demoSessions[p.id];if(!s){r({ok:false,error:"Session not found."});}else{s.claims[p.key]={staff:p.staff,status:(p.done?"done":"progress"),data:p.data||{items:{}}};r({ok:true,claims:JSON.parse(JSON.stringify(s.claims))});}}
+  else if(action==="auditClaim"){var s=demoSessions[p.id];if(!s){r({ok:false,error:"Session not found."});}else{r({ok:true,claims:JSON.parse(JSON.stringify(s.claims))});}}
+  else if(action==="auditSaveSection"){var s=demoSessions[p.id];if(!s){r({ok:false,error:"Session not found."});}else{clientMergeClaim(s.claims,p.key,p.staff,JSON.parse(JSON.stringify((p.data&&p.data.items)||{})),groupCountForKey(p.key));r({ok:true,claims:JSON.parse(JSON.stringify(s.claims))});}}
   else if(action==="auditFinalize"){demoAudits.unshift({ward:p.ward,auditor:p.auditor,overall:p.overall,performance:p.performance,sections:p.sections||[],negatives:p.negatives||[],date:today+" "+new Date().toTimeString().slice(0,5)});if(demoSessions[p.id])demoSessions[p.id].status="finalized";r({ok:true});}
   else if(action==="feedback"){r({ok:true});}
   else if(action==="listRefs"){r({ok:true,items:JSON.parse(JSON.stringify(demoRefs))});}
@@ -1407,7 +1445,7 @@ async function resumeGrand(id){
   toast(t("aud_saving"));
   try{ const res=await api("auditGet",{id:id});
     if(!res||!res.ok){ toast((res&&res.error)?res.error:t("t_failed"),true); return; }
-    gSession=res.session; gDr=res.session.dr||""; auditWard=res.session.ward;
+    gSession=res.session; gSessionAt=Date.now(); applyPendingToSession(); gDr=res.session.dr||""; auditWard=res.session.ward;
     view = gDr ? "grandSecs" : "grandDr"; setActive(); render();
   }catch(e){ toast(e.message||t("t_failed"),true); }
 }
@@ -1448,13 +1486,34 @@ async function pickGrandDr(name){
   gDr=name; toast(t("aud_saving"));
   try{ const res=await api("auditStart",{ward:auditWard,dr:name});
     if(!res||!res.ok){ toast((res&&res.error)?res.error:t("t_failed"),true); return; }
-    gSession=res.session; view="grandSecs"; setActive(); render();
+    gSession=res.session; gSessionAt=Date.now(); view="grandSecs"; setActive(); render();
   }catch(e){ toast(e.message||t("t_failed"),true); }
 }
-async function refreshSession(){
-  if(!gSession)return;
-  try{ const res=await api("auditGet",{id:gSession.id}); if(res&&res.ok){ gSession=res.session; render(); toast(t("grand_refreshed")); } }catch(e){}
+let gSessionAt=0, gRefreshing=false;
+async function refreshSession(silent){
+  if(!gSession||gRefreshing)return;
+  gRefreshing=true;
+  try{ const res=await api("auditGet",{id:gSession.id});
+    if(res&&res.ok){ gSession=res.session; gSessionAt=Date.now(); applyPendingToSession();
+      if(view==="grandSecs"||!silent) render();
+      if(!silent) toast(t("grand_refreshed")); } }
+  catch(e){ if(!silent) toast(e.message||t("t_failed"),true); }
+  finally{ gRefreshing=false; }
 }
+// Saves still waiting in this phone's offline queue are laid over the server copy, so a
+// refresh never makes them look "lost" before they have been sent.
+function applyPendingToSession(){
+  if(!gSession) return; gSession.claims=gSession.claims||{};
+  offQLoad().forEach(function(e){
+    if(e.action==="auditSaveSection"&&e.payload&&e.payload.id===gSession.id)
+      clientMergeClaim(gSession.claims,e.payload.key,e.payload.staff,JSON.parse(JSON.stringify((e.payload.data&&e.payload.data.items)||{})),groupCountForKey(e.payload.key));
+  });
+}
+// Auto-refresh the section list every 30 s while it is on screen, so each of the auditors
+// sees what the others have finished without having to tap Refresh.
+setInterval(function(){
+  if(view==="grandSecs" && gSession && !DEMO && navigator.onLine && document.visibilityState==="visible") refreshSession(true);
+},30000);
 // Pulls answers typed directly into the readable "GR <ward> <date>" Google Sheet tab back
 // into the app — for staff who filled the sheet by hand instead of using the app's own form.
 async function importFromSheet(){
@@ -1471,19 +1530,76 @@ async function importFromSheet(){
     render();
   }catch(e){ toast(e.message||t("t_failed"),true); }
 }
+// ---- helpers shared by screen, offline copy and demo (mirror the backend mergeClaim) ----
+function groupCountForKey(key){
+  const m=/^s(\d+)g(\d+)$/.exec(key||""); if(!m) return 0;
+  const sec=curAudit()[+m[1]]; const g=sec&&sec.g[+m[2]]; return g?g.i.length:0;
+}
+function gNormItem(it){
+  it=it||{}; const ans={};
+  if(it.ans){ Object.keys(it.ans).forEach(function(k){ if(it.ans[k]) ans[k]=it.ans[k]; }); }
+  else if(it.v){ ans["_"]=it.v; }
+  return {ans:ans, findings:(it.findings||[]).slice()};
+}
+function clientMergeClaim(claims,key,staff,incItems,count){
+  const prev=claims[key], prevItems=(prev&&prev.data&&prev.data.items)||{}, merged={};
+  Object.keys(prevItems).forEach(function(k){ merged[k]=gNormItem(prevItems[k]); });
+  Object.keys(incItems||{}).forEach(function(ik){
+    const inc=incItems[ik]||{}, ex=merged[ik]||{ans:{},findings:[]};
+    if(inc.v!==undefined){ if(inc.v) ex.ans[staff]=inc.v; else delete ex.ans[staff]; }
+    if(inc.findings!==undefined){
+      const others=(ex.findings||[]).filter(function(x){return x&&(x.by||"")!==staff;});
+      const mine=(inc.findings||[]).filter(function(x){return x&&(!x.by||x.by===staff)&&(x.desc||x.loc||(x.photos&&x.photos.length));})
+        .map(function(x){return {by:staff,loc:x.loc||"",desc:x.desc||"",photos:x.photos||[]};});
+      ex.findings=others.concat(mine);
+    }
+    if(!Object.keys(ex.ans).length&&!ex.findings.length) delete merged[ik]; else merged[ik]=ex;
+  });
+  if(!Object.keys(merged).length){ delete claims[key]; return; }
+  let answered=0; const names={};
+  Object.keys(merged).forEach(function(q){ const it=merged[q]; if(itemAggAns(it))answered++;
+    Object.keys(it.ans||{}).forEach(function(n){ if(n!=="_")names[n]=1; });
+    (it.findings||[]).forEach(function(x){ if(x&&x.by)names[x.by]=1; }); });
+  claims[key]={staff:staff,staffs:Object.keys(names),status:(count&&answered>=count)?"done":"progress",answered:answered,total:count||0,data:{items:merged}};
+}
+// After a save, confirm the server copy really contains what this auditor just sent.
+function verifySaved(claims,key,staff,items){
+  const c=claims&&claims[key], saved=(c&&c.data&&c.data.items)||{};
+  return Object.keys(items||{}).every(function(ii){
+    const inc=items[ii], it=gNormItem(saved[ii]);
+    if((inc.v||"")!==(it.ans[staff]||"")) return false;
+    const mine=(it.findings||[]).filter(function(x){return x&&x.by===staff;}).length;
+    return mine===(inc.findings||[]).length;
+  });
+}
+function gName(n){ return n==="_"?(lang==='ms'?"(rekod lama)":"(older record)"):n; }
+function sectionNames(c){
+  if(!c) return [];
+  if(c.staffs&&c.staffs.length) return c.staffs;
+  const names={}; const items=(c.data&&c.data.items)||{};
+  Object.keys(items).forEach(function(q){ const it=items[q]||{};
+    Object.keys(it.ans||{}).forEach(function(n){ if(n!=="_")names[n]=1; });
+    (it.findings||[]).forEach(function(x){ if(x&&x.by)names[x.by]=1; }); });
+  const out=Object.keys(names); if(!out.length&&c.staff) out.push(c.staff); return out;
+}
+// Status is worked out from the answers themselves (same rule as the backend and the session
+// list): green only when EVERY question has an answer from someone; yellow when started.
 function sectionStatus(si,gi){
   const c=gSession&&gSession.claims?gSession.claims[groupKey(si,gi)]:null;
-  if(!c) return {cls:"red",staff:"",status:"none"};
-  if(c.status==="done") return {cls:"green",staff:c.staff||"",status:"done"};
-  return {cls:"yellow",staff:c.staff||"",status:"progress"};
+  const total=curAudit()[si].g[gi].i.length;
+  if(!c||!c.data||!c.data.items) return {cls:"red",staff:"",status:"none",answered:0,total:total};
+  const items=c.data.items; let answered=0;
+  Object.keys(items).forEach(function(ii){ if(itemAggAns(items[ii]))answered++; });
+  const names=sectionNames(c).join(", ");
+  if(answered>=total) return {cls:"green",staff:names,status:"done",answered:answered,total:total};
+  return {cls:"yellow",staff:names,status:"progress",answered:answered,total:total};
 }
 function renderGrandSecs(){
-  const isDr = gDr && gDr===ukiStaff;
   let done=0,total=0;
   const secsHtml=curAudit().map(function(sec,si){
     const groups=sec.g.map(function(g,gi){
       total++; const st=sectionStatus(si,gi); if(st.status==="done")done++;
-      const badge = st.status==="done"?`✅ ${esc(st.staff)}`: st.status==="progress"?`✏️ ${esc(st.staff)}`:`🔴 ${t("grand_open")}`;
+      const badge = st.status==="done"?`✅ ${esc(st.staff)}`: st.status==="progress"?`✏️ ${st.answered}/${st.total} · ${esc(st.staff)}`:`🔴 ${t("grand_open")}`;
       return `<div class="gsec ${st.cls}" onclick="claimGroup(${si},${gi})">
         <div class="gsec-name">${esc(g.n)}</div><div class="gsec-badge">${badge}</div></div>`;
     }).join("");
@@ -1494,10 +1610,14 @@ function renderGrandSecs(){
      <div class="gs-bar"><div style="width:${total?Math.round(done/total*100):0}%"></div></div>
      <div class="gs-who">${grandWhoList()}</div></div>`;
   const banner = gMsg ? `<div class="save-banner">✅ ${esc(gMsg)} · ${t("grand_pick_next")}</div>` : "";
-  gMsg="";
+  const warn = gWarn ? `<div class="g-warn">⚠️ ${esc(gWarn)}</div>` : "";
+  gMsg=""; gWarn="";
+  const pend=offQLoad().filter(function(e){return e.action==="auditSaveSection"&&e.payload&&gSession&&e.payload.id===gSession.id;}).length;
+  const pendNote=pend?`<div class="g-warn" style="background:#fff7e0;border-color:#f0d58a;color:#7a5a00">⏳ ${lang==='ms'?pend+" seksyen anda masih dalam telefon — akan dihantar automatik bila internet stabil.":pend+" of your section(s) are still on this phone — they will be sent automatically."}</div>`:"";
+  const upd = gSessionAt ? `<div class="g-upd">${lang==='ms'?'Dikemas kini':'Updated'}: ${new Date(gSessionAt).toTimeString().slice(0,5)} · ${lang==='ms'?'auto-refresh setiap 30 saat':'auto-refresh every 30 s'}</div>` : "";
   content.innerHTML=`<div class="view-title">${t("grand_title")}</div>
     <button class="back-btn" onclick="view='dash';setActive();render()">‹ ${t("back_buildings")}</button>
-    ${banner}
+    ${banner}${warn}${pendNote}
     <div class="aud-head">
       <div><b>${t("l_ward")}:</b> ${esc(auditWard)}</div>
       <div><b>${t("grand_incharge")}:</b> ${esc(gSession?gSession.dr:gDr)}</div>
@@ -1505,44 +1625,82 @@ function renderGrandSecs(){
     </div>
     <div class="gsec-legend"><span class="dot red"></span>${t("grand_st_none")} <span class="dot yellow"></span>${t("grand_st_prog")} <span class="dot green"></span>${t("grand_st_done")}</div>
     <button class="a-line" style="width:100%;padding:11px;margin-bottom:10px" onclick="refreshSession()">🔄 ${t("grand_refresh")}</button>
+    ${upd}
     <button class="a-line" style="width:100%;padding:11px;margin-bottom:10px" onclick="importFromSheet()">📥 ${t("grand_import_sheet")}</button>
     ${summary}
     <div class="grand-note">${t("grand_save_note")}</div>
     ${secsHtml}
     <div class="aud-actions"><button class="btn" id="finalizeBtn" onclick="finalizeGrand(this)">📄 ${t("grand_finalize")}</button></div>`;
 }
+// Who has contributed: number of questions each auditor has answered, across all sections.
 function grandWhoList(){
   if(!gSession||!gSession.claims)return "";
   const by={};
-  Object.keys(gSession.claims).forEach(function(k){var c=gSession.claims[k];if(c&&c.staff){by[c.staff]=by[c.staff]||{done:0,prog:0};if(c.status==="done")by[c.staff].done++;else by[c.staff].prog++;}});
+  Object.keys(gSession.claims).forEach(function(k){ const c=gSession.claims[k]; const items=(c&&c.data&&c.data.items)||{};
+    Object.keys(items).forEach(function(q){ const it=gNormItem(items[q]);
+      Object.keys(it.ans).forEach(function(n){ if(n==="_")return; by[n]=by[n]||{a:0,f:0}; by[n].a++; });
+      it.findings.forEach(function(x){ if(x&&x.by){ by[x.by]=by[x.by]||{a:0,f:0}; by[x.by].f++; } }); }); });
   const names=Object.keys(by);
   if(!names.length)return `<div class="gs-none">${t("grand_none_yet")}</div>`;
-  return names.map(function(n){return `<div class="gs-person">${esc(n)}: <b>${by[n].done}</b> ${t("grand_st_done")}${by[n].prog?` · ${by[n].prog} ${t("grand_st_prog")}`:""}</div>`;}).join("");
+  return names.map(function(n){return `<div class="gs-person">${esc(n)}: <b>${by[n].a}</b> ${lang==='ms'?'jawapan':'answers'}${by[n].f?` · ${by[n].f} finding`:""}</div>`;}).join("");
+}
+// gDraft  = THIS auditor's own answer + own findings per question (editable)
+// gOthers = every other auditor's answers + findings (shown read-only)
+// gTouched = questions this auditor changed — only these are sent on save, so an auditor can
+//            never overwrite (or "stamp" their name on) an answer someone else gave.
+let gOthers={}, gTouched={}, gWarn="", gSaving=false;
+function openGroupFromClaims(si,gi){
+  const key=groupKey(si,gi);
+  gGroup={si:si,gi:gi}; gDraft={}; gOthers={}; gTouched={};
+  const c=gSession.claims?gSession.claims[key]:null;
+  const items=(c&&c.data&&c.data.items)||{};
+  // anything of mine still waiting in the offline queue is shown as my draft
+  const pending=offQSectionItems(gSession.id,key,ukiStaff);
+  const all=Object.assign({},items); Object.keys(pending).forEach(function(k){ if(!all[k]) all[k]={}; });
+  Object.keys(all).forEach(function(ii){
+    const it=gNormItem(items[ii]);
+    const mineF=it.findings.filter(function(x){return x&&x.by===ukiStaff;});
+    const othF=it.findings.filter(function(x){return x&&x.by!==ukiStaff;});
+    const othA={}; Object.keys(it.ans).forEach(function(n){ if(n!==ukiStaff) othA[n]=it.ans[n]; });
+    gOthers[ii]={ans:othA, findings:othF};
+    gDraft[ii]={v:it.ans[ukiStaff]||"", findings:JSON.parse(JSON.stringify(mineF))};
+    if(pending[ii]){
+      if(pending[ii].v!==undefined) gDraft[ii].v=pending[ii].v;
+      if(pending[ii].findings!==undefined) gDraft[ii].findings=JSON.parse(JSON.stringify(pending[ii].findings));
+      gTouched[ii]=true;
+    }
+  });
+  view="grandSec"; render();
 }
 async function claimGroup(si,gi){
   const key=groupKey(si,gi);
+  toast(lang==='ms'?"Memuatkan data terkini…":"Loading latest…");
   try{ const res=await api("auditClaim",{id:gSession.id,key:key,staff:ukiStaff});
-    if(!res||!res.ok){ if(res&&res.claims)gSession.claims=res.claims; toast((res&&res.error)?res.error:t("t_failed"),true); render(); return; }
-    gSession.claims=res.claims;
-    gGroup={si:si,gi:gi};
-    gDraft={};
-    const c=gSession.claims[key];
-    if(c&&c.data&&c.data.items){ Object.keys(c.data.items).forEach(function(ii){
-      var it=JSON.parse(JSON.stringify(c.data.items[ii]));
-      it.v = (it.ans && it.ans[ukiStaff]!==undefined) ? it.ans[ukiStaff] : itemAggAns(it);
-      gDraft[ii]=it;
-    }); }
-    view="grandSec"; render();
-  }catch(e){ toast(e.message||t("t_failed"),true); }
+    if(res&&res.ok&&res.claims){ gSession.claims=res.claims; gSessionAt=Date.now(); applyPendingToSession(); }
+  }catch(e){
+    toast(lang==='ms'?"Tiada sambungan — guna data terakhir dalam telefon.":"Offline — using the last data on this phone.",true);
+  }
+  openGroupFromClaims(si,gi);
 }
-function gSecSet(ii,v){ gDraft[ii]=gDraft[ii]||{findings:[]}; gDraft[ii].v=v; if((v==="N"||v==="P")&&(!gDraft[ii].findings||!gDraft[ii].findings.length))gDraft[ii].findings=[{loc:"",desc:"",photos:[]}]; renderGrandSec(); }
-function gAddFinding(ii){ gDraft[ii]=gDraft[ii]||{findings:[]}; gDraft[ii].findings=gDraft[ii].findings||[]; gDraft[ii].findings.push({loc:"",desc:"",photos:[]}); renderGrandSec(); }
-function gFindLoc(ii,fi,val){ gDraft[ii].findings[fi].loc=val; }
-function gRmFinding(ii,fi){ if(gDraft[ii]&&gDraft[ii].findings){gDraft[ii].findings.splice(fi,1);} renderGrandSec(); }
-function gFindDesc(ii,fi,val){ gDraft[ii].findings[fi].desc=val; }
-async function gFindPhoto(ii,fi,ev){ var files=[].slice.call(ev.target.files||[]); for(var i=0;i<files.length;i++){try{var d=await img2base64(files[i]);gDraft[ii].findings[fi].photos.push(d);}catch(e){}} ev.target.value=""; gRenderThumbs(ii,fi); }
-function gRmFindPhoto(ii,fi,pi){ gDraft[ii].findings[fi].photos.splice(pi,1); gRenderThumbs(ii,fi); }
+function gTouch(ii){ gTouched[ii]=true; }
+function gSecSet(ii,v){ gDraft[ii]=gDraft[ii]||{findings:[]}; gDraft[ii].v=v; gTouch(ii); if((v==="N"||v==="P")&&(!gDraft[ii].findings||!gDraft[ii].findings.length))gDraft[ii].findings=[{loc:"",desc:"",photos:[]}]; renderGrandSec(); }
+function gAddFinding(ii){ gDraft[ii]=gDraft[ii]||{findings:[]}; gDraft[ii].findings=gDraft[ii].findings||[]; gDraft[ii].findings.push({loc:"",desc:"",photos:[]}); gTouch(ii); renderGrandSec(); }
+function gFindLoc(ii,fi,val){ gDraft[ii].findings[fi].loc=val; gTouch(ii); }
+function gRmFinding(ii,fi){ if(gDraft[ii]&&gDraft[ii].findings){gDraft[ii].findings.splice(fi,1);} gTouch(ii); renderGrandSec(); }
+function gFindDesc(ii,fi,val){ gDraft[ii].findings[fi].desc=val; gTouch(ii); }
+async function gFindPhoto(ii,fi,ev){ var files=[].slice.call(ev.target.files||[]); for(var i=0;i<files.length;i++){try{var d=await img2base64(files[i]);gDraft[ii].findings[fi].photos.push(d);}catch(e){}} ev.target.value=""; gTouch(ii); gRenderThumbs(ii,fi); }
+function gRmFindPhoto(ii,fi,pi){ gDraft[ii].findings[fi].photos.splice(pi,1); gTouch(ii); gRenderThumbs(ii,fi); }
 function gRenderThumbs(ii,fi){ var box=document.getElementById("gth_"+ii+"_"+fi); if(box)box.innerHTML=gDraft[ii].findings[fi].photos.map(function(u,pi){return '<div class="athumb"><img src="'+u+'"><button onclick="gRmFindPhoto('+ii+','+fi+','+pi+')">×</button></div>';}).join(""); }
+function othersBlock(ii){
+  const o=gOthers[ii]; if(!o) return "";
+  const names=Object.keys(o.ans||{});
+  const ansHtml=names.length?`<div class="g-others">👥 ${names.map(function(n){return esc(gName(n))+": <b class=\""+esc(o.ans[n])+"\">"+esc(o.ans[n])+"</b>";}).join(" · ")}</div>`:"";
+  const fHtml=(o.findings||[]).map(function(f){
+    return `<div class="g-ofind"><div class="g-ofind-h">🔒 ${esc(gName(f.by||"_"))}</div>${f.loc?"<b>["+esc(f.loc)+"]</b> ":""}${esc(f.desc||"")}
+      ${(f.photos&&f.photos.length)?`<div class="aud-thumbs">${f.photos.map(function(u){return '<div class="athumb"><img src="'+esc(u)+'"></div>';}).join("")}</div>`:""}</div>`;
+  }).join("");
+  return ansHtml+fHtml;
+}
 function findingsBlock(ii){
   var d=gDraft[ii]||{};
   var flds=(d.findings||[]).map(function(f,fi){
@@ -1565,41 +1723,90 @@ function renderGrandSec(){
     const d=gDraft[ii]||{};
     return `<div class="aud-item">
       <div class="aud-q">${esc(itemText(txt))}</div>
+      ${othersBlock(ii)}
+      <div class="g-mylbl">${lang==='ms'?'Jawapan anda':'Your answer'} (${esc(ukiStaff)})</div>
       <div class="aud-sel"><select onchange="gSecSet(${ii},this.value)">
         <option value="">—</option><option value="Y"${d.v==='Y'?' selected':''}>Y</option><option value="N"${d.v==='N'?' selected':''}>N</option><option value="P"${d.v==='P'?' selected':''}>P</option><option value="NA"${d.v==='NA'?' selected':''}>NA</option></select></div>
       ${findingsBlock(ii)}</div>`;
   }).join("");
   content.innerHTML=`<div class="view-title">${esc(g.n)}</div>
-    <button class="back-btn" onclick="view='grandSecs';render()">‹ ${t("grand_back_secs")}</button>
+    <button class="back-btn" onclick="gLeaveSec()">‹ ${t("grand_back_secs")}</button>
     <div class="aud-head"><div><b>${t("l_ward")}:</b> ${esc(auditWard)} · <b>${t("by_word")}:</b> ${esc(ukiStaff)}</div>
       <div class="aud-legend">Y = ${t("aud_yes")} · P = ${t("grand_partial")} · N = ${t("aud_no")} · NA = ${t("aud_na")}</div></div>
     <div class="aud-group">${rows}</div>
     <div class="aud-actions">
-      <button class="btn" onclick="saveGrandSec(true)">✅ ${t("grand_mark_done")}</button>
-      <button class="a-line" style="width:100%;padding:12px" onclick="saveGrandSec(false)">💾 ${t("grand_save_prog")}</button>
+      <button class="btn gsave-btn" onclick="saveGrandSec(true)">✅ ${t("grand_mark_done")}</button>
+      <button class="a-line gsave-btn" style="width:100%;padding:12px" onclick="saveGrandSec(false)">💾 ${t("grand_save_prog")}</button>
     </div>`;
 }
+function gLeaveSec(){
+  if(Object.keys(gTouched).length && !confirm(lang==='ms'?"Ada perubahan yang belum disimpan. Keluar tanpa simpan?":"You have unsaved changes. Leave without saving?")) return;
+  view='grandSecs'; render();
+}
+function gSetSaving(on){
+  gSaving=on;
+  document.querySelectorAll(".gsave-btn").forEach(function(b){ b.disabled=on; b.style.opacity=on?".6":""; });
+}
 async function saveGrandSec(done){
+  if(gSaving) return;                                   // stop double-tap
   const si=gGroup.si, gi=gGroup.gi, g=curAudit()[si].g[gi];
-  const key=groupKey(si,gi);
-  const data={items:{}};
-  const detailLines=[];
-  g.i.forEach(function(txt,ii){
-    var d=gDraft[ii]||{};
-    if(d.v||(d.findings&&d.findings.length)){
-      data.items[ii]={v:d.v||"",findings:(d.findings||[]).filter(function(f){return f.desc||(f.photos&&f.photos.length);})};
-    }
-    var ans=d.v||"—";
-    var line=(ii+1)+". ["+ans+"] "+txt;
-    if((d.v==="N"||d.v==="P")&&d.findings){ d.findings.forEach(function(f,fi){ if(f.desc)line+="  |  "+t("grand_finding")+" "+(fi+1)+": "+f.desc; }); }
-    detailLines.push(line);
+  const key=groupKey(si,gi), sid=gSession.id, staff=ukiStaff;
+  if(!staff){ toast(lang==='ms'?"Nama auditor tiada — sila log masuk semula.":"No auditor name — please log in again.",true); return; }
+  // Only the questions this auditor actually changed are sent.
+  const items={};
+  Object.keys(gTouched).forEach(function(ii){
+    const d=gDraft[ii]||{};
+    items[ii]={v:d.v||"", findings:(d.findings||[]).filter(function(f){return f.desc||f.loc||(f.photos&&f.photos.length);})
+      .map(function(f){return {loc:f.loc||"",desc:f.desc||"",photos:f.photos||[]};})};
   });
-  const detail = g.n + "\n" + detailLines.join("\n");
-  toast(t("aud_saving"));
-  try{ const res=await api("auditSaveSection",{id:gSession.id,key:key,staff:ukiStaff,data:data,done:done,detail:detail});
-    if(!res||!res.ok){ toast((res&&res.error)?res.error:t("t_failed"),true); return; }
-    gSession.claims=res.claims; gMsg=done?t("grand_sec_done"):t("grand_sec_saved"); view="grandSecs"; render();
-  }catch(e){ toast(e.message||t("t_failed"),true); }
+  if(done){
+    const blanks=[];
+    g.i.forEach(function(_,ii){ const own=(gDraft[ii]||{}).v; const oth=gOthers[ii]&&Object.keys(gOthers[ii].ans||{}).length; if(!own&&!oth) blanks.push(ii+1); });
+    if(blanks.length && !confirm((lang==='ms'
+      ?"Section ini BELUM lengkap — soalan no. "+blanks.join(", ")+" belum dijawab oleh sesiapa.\nIa akan kekal kuning sehingga semua soalan dijawab.\n\nSimpan juga?"
+      :"This section is NOT complete — question(s) "+blanks.join(", ")+" have no answer yet.\nIt stays yellow until every question is answered.\n\nSave anyway?"))) return;
+  }
+  if(!Object.keys(items).length){ gMsg=lang==='ms'?"Tiada perubahan untuk disimpan":"Nothing changed"; view="grandSecs"; render(); return; }
+  // fold in anything of mine for this section still waiting in the offline queue
+  const payloadItems=Object.assign({},offQSectionItems(sid,key,staff),items);
+  const payload={id:sid,key:key,staff:staff,data:{items:payloadItems},done:done};
+  gSetSaving(true); toast(t("aud_saving"));
+  while(_offQFlushing){ await new Promise(function(r){setTimeout(r,300);}); }
+  let res=null, err=null;
+  try{
+    if(DEMO) res=await demoApi("auditSaveSection",JSON.parse(JSON.stringify(payload)));
+    else if(!navigator.onLine) err=new Error("offline");
+    else res=await _apiCall("auditSaveSection",payload);
+  }catch(e){ err=e; }
+  // Timed out: the server may have saved anyway — check before deciding.
+  if(!res && err && err.timeout && navigator.onLine){
+    try{ const g2=await _apiCall("auditGet",{id:sid});
+      if(g2&&g2.ok&&verifySaved(g2.session.claims,key,staff,payloadItems)) res={ok:true,claims:g2.session.claims}; }catch(e2){}
+  }
+  if(res && res.ok){
+    offQRemoveSection(sid,key,staff);
+    gSession.claims=res.claims||gSession.claims; gSessionAt=Date.now();
+    if(!verifySaved(gSession.claims,key,staff,payloadItems)){
+      gSetSaving(false);
+      toast(lang==='ms'?"Semakan gagal: jawapan anda tidak dijumpai dalam server. Sila tekan simpan semula.":"Check failed: your answers were not found on the server. Please save again.",true);
+      return;                                            // stay on the form — draft is kept
+    }
+    gSetSaving(false);
+    gMsg=(sectionStatus(si,gi).status==="done")?t("grand_sec_done"):t("grand_sec_saved");
+    view="grandSecs"; render(); return;
+  }
+  if(res && !res.ok){                                    // server answered with an error (e.g. busy)
+    gSetSaving(false);
+    toast((res.error||t("t_failed"))+(lang==='ms'?" — data anda masih di skrin, tekan simpan semula.":" — your data is still on screen, save again."),true);
+    return;
+  }
+  // No connection: keep it on the phone and show it on screen — nothing disappears.
+  offQPush("auditSaveSection",payload);
+  gSession.claims=gSession.claims||{};
+  clientMergeClaim(gSession.claims,key,staff,JSON.parse(JSON.stringify(payloadItems)),g.i.length);
+  gSetSaving(false);
+  gWarn=lang==='ms'?"Internet lemah — section ini disimpan dalam telefon dan akan dihantar automatik. Jangan tutup/clear browser.":"Weak connection — this section is kept on this phone and will be sent automatically. Don't clear the browser.";
+  view="grandSecs"; render();
 }
 // Mirrors the backend's aggAns(): a saved item's value lives under ans:{staffName:val}
 // (each collaborator's own answer) — NOT a single .v field. When several staff answered,

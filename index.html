@@ -353,11 +353,27 @@ html{color-scheme:light}
 .gs-bar{background:#eef1f0;border-radius:6px;height:8px;overflow:hidden;margin-bottom:8px}
 .gs-bar div{height:100%;background:linear-gradient(90deg,#137a41,#28a860);border-radius:6px}
 .gs-who{font-size:12px;color:var(--muted)}.gs-person{margin:2px 0}.gs-none{font-style:italic}
-.g-others{font-size:12px;background:#eef5f0;border:1px solid #cfe8d8;border-radius:8px;padding:6px 9px;margin:6px 0;line-height:1.6}
-.g-others b{color:#137a41}.g-others b.N{color:#b02a2a}.g-others b.P{color:#b8860b}
-.g-ofind{border:1px dashed #cfd8d3;border-radius:8px;padding:8px;margin-bottom:8px;background:#fafcfb;font-size:12.5px}
-.g-ofind .g-ofind-h{font-size:11.5px;color:#5a6b62;font-weight:700;margin-bottom:3px}
-.g-mylbl{font-size:11.5px;font-weight:700;color:#137a41;margin:6px 0 3px}
+.g-card{border:1px solid #dfe7e2;border-radius:12px;background:#fff;padding:12px 12px 10px;margin-bottom:12px;box-shadow:0 1px 2px rgba(0,0,0,.03)}
+.g-card.ans-N{border-left:5px solid #c0392b}.g-card.ans-P{border-left:5px solid #d9a21b}.g-card.ans-Y{border-left:5px solid #1e9e57}.g-card.ans-NA{border-left:5px solid #9aa5a0}.g-card.ans-{border-left:5px solid #dfe7e2}
+.g-qrow{display:flex;gap:10px;align-items:flex-start;justify-content:space-between}
+.g-qnum{flex:0 0 auto;width:24px;height:24px;border-radius:50%;background:#eef5f0;color:#137a41;font-weight:800;font-size:12px;display:flex;align-items:center;justify-content:center}
+.g-qtxt{flex:1;font-size:13.5px;line-height:1.45;font-weight:600;color:#1f2d26}
+.g-res{flex:0 0 auto;font-size:11px;font-weight:800;padding:3px 8px;border-radius:20px;background:#eef1ef;color:#5a6b62;white-space:nowrap}
+.g-res.N{background:#fdecea;color:#b02a2a}.g-res.P{background:#fff4d6;color:#8a6500}.g-res.Y{background:#e3f5ea;color:#137a41}.g-res.NA{background:#eef1ef;color:#5a6b62}
+.g-sec-lbl{font-size:10.5px;font-weight:800;letter-spacing:.04em;text-transform:uppercase;color:#7b8a83;margin:12px 0 6px}
+.g-person{background:#f7f9f8;border:1px solid #e6ece9;border-radius:9px;padding:8px 10px;margin-bottom:6px}
+.g-person-h{display:flex;align-items:center;justify-content:space-between;gap:8px;font-size:12.5px;font-weight:700;color:#33443b}
+.g-pill{font-size:11px;font-weight:800;padding:2px 9px;border-radius:20px;background:#eef1ef;color:#5a6b62}
+.g-pill.N{background:#fdecea;color:#b02a2a}.g-pill.P{background:#fff4d6;color:#8a6500}.g-pill.Y{background:#e3f5ea;color:#137a41}
+.g-pf{font-size:12.5px;color:#33443b;margin-top:6px;padding-top:6px;border-top:1px dashed #dfe5e2;line-height:1.45}
+.g-pf .loc{display:inline-block;background:#e8eef9;color:#2b4a87;font-weight:700;font-size:11px;border-radius:5px;padding:1px 6px;margin-right:4px}
+.g-mine{background:#f2faf5;border:1.5px solid #bfe0cc;border-radius:10px;padding:10px;margin-top:10px}
+.g-mine-h{font-size:12px;font-weight:800;color:#137a41;margin-bottom:8px}
+.g-seg{display:flex;gap:6px}
+.g-seg button{flex:1;padding:9px 0;border-radius:8px;border:1.5px solid #cfd8d3;background:#fff;font-weight:800;font-size:13px;color:#4a5a52;cursor:pointer}
+.g-seg button.on.Y{background:#1e9e57;border-color:#1e9e57;color:#fff}.g-seg button.on.P{background:#d9a21b;border-color:#d9a21b;color:#fff}
+.g-seg button.on.N{background:#c0392b;border-color:#c0392b;color:#fff}.g-seg button.on.NA{background:#7b8a83;border-color:#7b8a83;color:#fff}
+.g-mine .aud-neg{background:transparent;border:none;padding:0;margin-top:8px}
 .g-upd{font-size:11.5px;color:#5a6b62;text-align:center;margin:-4px 0 10px}
 .g-warn{background:#fdecea;border:1px solid #f5c2bd;color:#8a1f17;border-radius:9px;padding:9px 12px;font-size:12.5px;margin-bottom:10px;font-weight:600}
 .gfind{border:1px solid #f3d6cc;border-radius:8px;padding:9px;margin-bottom:8px;background:#fff}
@@ -1691,15 +1707,21 @@ function gFindDesc(ii,fi,val){ gDraft[ii].findings[fi].desc=val; gTouch(ii); }
 async function gFindPhoto(ii,fi,ev){ var files=[].slice.call(ev.target.files||[]); for(var i=0;i<files.length;i++){try{var d=await img2base64(files[i]);gDraft[ii].findings[fi].photos.push(d);}catch(e){}} ev.target.value=""; gTouch(ii); gRenderThumbs(ii,fi); }
 function gRmFindPhoto(ii,fi,pi){ gDraft[ii].findings[fi].photos.splice(pi,1); gTouch(ii); gRenderThumbs(ii,fi); }
 function gRenderThumbs(ii,fi){ var box=document.getElementById("gth_"+ii+"_"+fi); if(box)box.innerHTML=gDraft[ii].findings[fi].photos.map(function(u,pi){return '<div class="athumb"><img src="'+u+'"><button onclick="gRmFindPhoto('+ii+','+fi+','+pi+')">×</button></div>';}).join(""); }
+// Other auditors, grouped per person: their answer + their findings (read-only)
 function othersBlock(ii){
   const o=gOthers[ii]; if(!o) return "";
-  const names=Object.keys(o.ans||{});
-  const ansHtml=names.length?`<div class="g-others">👥 ${names.map(function(n){return esc(gName(n))+": <b class=\""+esc(o.ans[n])+"\">"+esc(o.ans[n])+"</b>";}).join(" · ")}</div>`:"";
-  const fHtml=(o.findings||[]).map(function(f){
-    return `<div class="g-ofind"><div class="g-ofind-h">🔒 ${esc(gName(f.by||"_"))}</div>${f.loc?"<b>["+esc(f.loc)+"]</b> ":""}${esc(f.desc||"")}
-      ${(f.photos&&f.photos.length)?`<div class="aud-thumbs">${f.photos.map(function(u){return '<div class="athumb"><img src="'+esc(u)+'"></div>';}).join("")}</div>`:""}</div>`;
+  const people={};
+  Object.keys(o.ans||{}).forEach(function(n){ people[n]=people[n]||{ans:"",f:[]}; people[n].ans=o.ans[n]; });
+  (o.findings||[]).forEach(function(f){ const n=f.by||"_"; people[n]=people[n]||{ans:"",f:[]}; people[n].f.push(f); });
+  const names=Object.keys(people); if(!names.length) return "";
+  return `<div class="g-sec-lbl">👥 ${lang==='ms'?'Dapatan auditor lain':'Other auditors'}</div>`+names.map(function(n){
+    const p=people[n];
+    const fs=p.f.map(function(f){
+      return `<div class="g-pf">${f.loc?`<span class="loc">📍 ${esc(f.loc)}</span>`:""}${esc(f.desc||"")}
+        ${(f.photos&&f.photos.length)?`<div class="aud-thumbs">${f.photos.map(function(u){return '<div class="athumb"><img src="'+esc(u)+'"></div>';}).join("")}</div>`:""}</div>`;
+    }).join("");
+    return `<div class="g-person"><div class="g-person-h"><span>🔒 ${esc(gName(n))}</span>${p.ans?`<span class="g-pill ${esc(p.ans)}">${esc(p.ans)}</span>`:`<span class="g-pill">${lang==='ms'?'finding sahaja':'finding only'}</span>`}</div>${fs}</div>`;
   }).join("");
-  return ansHtml+fHtml;
 }
 function findingsBlock(ii){
   var d=gDraft[ii]||{};
@@ -1715,25 +1737,33 @@ function findingsBlock(ii){
       <div class="aud-thumbs" id="gth_${ii}_${fi}">${(f.photos||[]).map(function(u,pi){return '<div class="athumb"><img src="'+u+'"><button onclick="gRmFindPhoto('+ii+','+fi+','+pi+')">×</button></div>';}).join("")}</div>
     </div>`;
   }).join("");
-  return `<div class="aud-neg" style="display:block">${flds}<button class="gfind-add" onclick="gAddFinding(${ii})">＋ ${t("grand_add_finding")}</button></div>`;
+  return `<div class="aud-neg" style="display:block">${flds}<button class="gfind-add" onclick="gAddFinding(${ii})">＋ ${lang==='ms'?'Tambah finding / gambar saya':'Add my finding / photo'}</button></div>`;
 }
+// tap the selected answer again to clear it
+function gSegSet(ii,v){ const cur=(gDraft[ii]||{}).v||""; gSecSet(ii, cur===v?"":v); }
 function renderGrandSec(){
   const si=gGroup.si, gi=gGroup.gi, g=curAudit()[si].g[gi];
   const rows=g.i.map(function(txt,ii){
     const d=gDraft[ii]||{};
-    return `<div class="aud-item">
-      <div class="aud-q">${esc(itemText(txt))}</div>
+    // combined result for this question = others' answers + my current draft (worst wins)
+    const comb={ans:Object.assign({},(gOthers[ii]&&gOthers[ii].ans)||{})}; if(d.v) comb.ans[ukiStaff]=d.v;
+    const res=itemAggAns(comb);
+    const resLbl=res?((lang==='ms'?'Keputusan: ':'Result: ')+res):(lang==='ms'?'Belum dijawab':'Not answered');
+    const seg=["Y","P","N","NA"].map(function(v){ return `<button type="button" class="${v}${d.v===v?' on':''}" onclick="gSegSet(${ii},'${v}')">${v}</button>`; }).join("");
+    return `<div class="g-card ans-${res}">
+      <div class="g-qrow"><div class="g-qnum">${ii+1}</div><div class="g-qtxt">${esc(itemText(txt))}</div><div class="g-res ${res}">${resLbl}</div></div>
       ${othersBlock(ii)}
-      <div class="g-mylbl">${lang==='ms'?'Jawapan anda':'Your answer'} (${esc(ukiStaff)})</div>
-      <div class="aud-sel"><select onchange="gSecSet(${ii},this.value)">
-        <option value="">—</option><option value="Y"${d.v==='Y'?' selected':''}>Y</option><option value="N"${d.v==='N'?' selected':''}>N</option><option value="P"${d.v==='P'?' selected':''}>P</option><option value="NA"${d.v==='NA'?' selected':''}>NA</option></select></div>
-      ${findingsBlock(ii)}</div>`;
+      <div class="g-mine">
+        <div class="g-mine-h">✏️ ${lang==='ms'?'Jawapan & finding anda':'Your answer & findings'} (${esc(ukiStaff)})</div>
+        <div class="g-seg">${seg}</div>
+        ${findingsBlock(ii)}
+      </div></div>`;
   }).join("");
   content.innerHTML=`<div class="view-title">${esc(g.n)}</div>
     <button class="back-btn" onclick="gLeaveSec()">‹ ${t("grand_back_secs")}</button>
     <div class="aud-head"><div><b>${t("l_ward")}:</b> ${esc(auditWard)} · <b>${t("by_word")}:</b> ${esc(ukiStaff)}</div>
       <div class="aud-legend">Y = ${t("aud_yes")} · P = ${t("grand_partial")} · N = ${t("aud_no")} · NA = ${t("aud_na")}</div></div>
-    <div class="aud-group">${rows}</div>
+    <div>${rows}</div>
     <div class="aud-actions">
       <button class="btn gsave-btn" onclick="saveGrandSec(true)">✅ ${t("grand_mark_done")}</button>
       <button class="a-line gsave-btn" style="width:100%;padding:12px" onclick="saveGrandSec(false)">💾 ${t("grand_save_prog")}</button>
@@ -1960,6 +1990,12 @@ function openReportWindow(html){
     var w2=window.open("","_blank"); if(w2){ w2.document.write(html); w2.document.close(); } else { toast(t("aud_popup"),true); }
   }
 }
+// File name for Save-as-PDF / Word: the browser uses the report tab's <title>, so put the
+// ward/location and date in it, e.g. "IPC Audit Report - W4 - 24 Nov 2026".
+function reportFileName(prefix, place, date){
+  return [prefix, place, date].filter(function(x){return x && String(x).trim();}).join(" - ")
+    .replace(/[\\/:*?"<>|]+/g," ").replace(/\s+/g," ").trim().slice(0,120);
+}
 function buildAuditReportHTML(o){
   var RL=(o.rlang||lang)==='ms'?'ms':'en';
   function rl(en,ms){return RL==='ms'?ms:en;}
@@ -2023,7 +2059,7 @@ function buildAuditReportHTML(o){
   var comp=(o.secs||[]).reduce(function(a,s){return a+(s.y||0);},0);
   var applicable=(o.secs||[]).reduce(function(a,s){return a+(s.y||0)+(s.n||0);},0);
   var noncomp=(o.secs||[]).reduce(function(a,s){return a+(s.n||0);},0);
-  return `<!doctype html><html><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>IPC Audit Report</title><style>
+  return `<!doctype html><html><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>${esc(reportFileName("IPC Audit Report", o.wardLabel, o.date))}</title><style>
    *{box-sizing:border-box}body{font-family:-apple-system,Segoe UI,Roboto,Arial,sans-serif;color:#1f2a24;margin:0;background:#eceeed}
    .doc{max-width:840px;margin:0 auto;padding:30px;background:#fff;font-size:13px;line-height:1.55;overflow-x:hidden}
    body{overflow-x:hidden}
@@ -2070,7 +2106,7 @@ function buildAuditReportHTML(o){
        <div class="sblk"><div class="slbl">${rl("Reviewed by","Disemak oleh")}:</div><div class="sline"></div><div contenteditable="true">&nbsp;</div><div class="srole">Head, Infection Control Unit, HTPN Kajang</div></div></div>
    </div>
    <script>
-   function saveWord(){var doc=document.querySelector('.doc').cloneNode(true);doc.querySelectorAll('[contenteditable]').forEach(function(e){e.removeAttribute('contenteditable');});var pp=document.getElementById('pp');if(pp&&!pp.checked){doc.querySelectorAll('.imgs').forEach(function(e){e.remove();});}doc.querySelectorAll('.chartbox').forEach(function(e){var s=e.parentNode;if(s&&s.classList.contains('sec'))s.remove();else e.remove();});var css="body{font-family:Calibri,Arial,sans-serif;font-size:11pt;color:#1f2a24}table{border-collapse:collapse;width:100%}th,td{border:1px solid #444;padding:6px;vertical-align:top}th{background:#cfe8d8}.imgs img{width:150px;height:auto;margin:0 6px 6px 0}.sh{font-weight:bold;color:#137a41}.sblk{display:inline-block;width:45%;vertical-align:top;margin-right:4%}.fmeta{font-size:9pt;color:#666}.fgrp{font-weight:bold;margin:2px 0 6px}.flist{margin:0 0 6px 18px}.flist li{margin-bottom:5px}.reclist{margin:0 0 0 16px}.reclist li{margin-bottom:6px}td.cno{text-align:center;font-weight:bold}";var html="<html xmlns:o='urn:schemas-microsoft-com:office:office' xmlns:w='urn:schemas-microsoft-com:office:word' xmlns='http://www.w3.org/TR/REC-html40'><head><meta charset=\\"utf-8\\"><style>"+css+"</style></head><body>"+doc.outerHTML+"</body></html>";var blob=new Blob([String.fromCharCode(65279)+html],{type:'application/msword'});var a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download='IPC-Audit-Report.doc';document.body.appendChild(a);a.click();a.remove();}
+   function saveWord(){var doc=document.querySelector('.doc').cloneNode(true);doc.querySelectorAll('[contenteditable]').forEach(function(e){e.removeAttribute('contenteditable');});var pp=document.getElementById('pp');if(pp&&!pp.checked){doc.querySelectorAll('.imgs').forEach(function(e){e.remove();});}doc.querySelectorAll('.chartbox').forEach(function(e){var s=e.parentNode;if(s&&s.classList.contains('sec'))s.remove();else e.remove();});var css="body{font-family:Calibri,Arial,sans-serif;font-size:11pt;color:#1f2a24}table{border-collapse:collapse;width:100%}th,td{border:1px solid #444;padding:6px;vertical-align:top}th{background:#cfe8d8}.imgs img{width:150px;height:auto;margin:0 6px 6px 0}.sh{font-weight:bold;color:#137a41}.sblk{display:inline-block;width:45%;vertical-align:top;margin-right:4%}.fmeta{font-size:9pt;color:#666}.fgrp{font-weight:bold;margin:2px 0 6px}.flist{margin:0 0 6px 18px}.flist li{margin-bottom:5px}.reclist{margin:0 0 0 16px}.reclist li{margin-bottom:6px}td.cno{text-align:center;font-weight:bold}";var html="<html xmlns:o='urn:schemas-microsoft-com:office:office' xmlns:w='urn:schemas-microsoft-com:office:word' xmlns='http://www.w3.org/TR/REC-html40'><head><meta charset=\\"utf-8\\"><style>"+css+"</style></head><body>"+doc.outerHTML+"</body></html>";var blob=new Blob([String.fromCharCode(65279)+html],{type:'application/msword'});var a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download=(document.title||'IPC-Audit-Report')+'.doc';document.body.appendChild(a);a.click();a.remove();}
    <\/script></body></html>`;
 }
 function openAuditReport(){
@@ -2098,6 +2134,116 @@ function driveNoticeHTML(a){
      </div>
      <div style="text-align:center;margin-top:20px"><button onclick="window.close()" style="padding:10px 20px;border:none;border-radius:8px;background:#137a41;color:#fff;font-weight:700;cursor:pointer">Close</button></div>
    </div></body></html>`;
+}
+/* ===== AI prompt: polish a Grand Round report in Claude =====
+   Builds a ready-to-paste prompt that carries ALL of this audit's data (scores per section and
+   component + every non-compliant finding) and the exact layout of the official HTPN report, so
+   the auditor only has to copy → paste into Claude. No upload of the app data is needed. */
+const REPORT_FULLNAMES={"Dr Aneesa":"Dr Aneesa Binti Tharek","Dr Zaila":"Dr Nor Zaila Binti Zaidan"};
+function buildClaudePrompt(a){
+  const perf=auditPerf(Number(a.overall)||0);
+  const day=String(a.date||"").slice(0,10);
+  const prep=REPORT_FULLNAMES[a.auditor]||a.auditor||"";
+  let y=0,p=0,n=0;
+  const secLines=[];
+  (a.sections||[]).forEach(function(sec){
+    y+=sec.y||0; p+=sec.p||0; n+=sec.n||0;
+    secLines.push("- "+sec.name+" | Compliant "+(sec.y||0)+" | Partial "+(sec.p||0)+" | Non-compliant "+(sec.n||0)+" | Applicable "+((sec.y||0)+(sec.p||0)+(sec.n||0))+" | "+(sec.pct==null?"NA":sec.pct+"%"));
+    (sec.groups||[]).forEach(function(g){
+      if(g.pct==null) return;
+      secLines.push("    • "+g.name+" | Compliant "+(g.y||0)+" | Partial "+(g.p||0)+" | Non-compliant "+(g.n||0)+" | Applicable "+((g.y||0)+(g.p||0)+(g.n||0))+" | "+g.pct+"%");
+    });
+  });
+  const negLines=(a.negatives||[]).map(function(x,i){
+    let l=(i+1)+". ["+(x.sec||"")+" · "+(x.grp||"")+"]\n   Checklist item: "+(x.text||"")+"\n   Auditor's finding: "+(x.note&&x.note.trim()?x.note:"(no description written)");
+    if(x.photos&&x.photos.length) l+="\n   Photo(s): "+x.photos.join(" , ");
+    return l;
+  });
+  return [
+"You are an Infection Prevention & Control (IPC) specialist helping the Infection Control Unit (UKI), Hospital Tengku Permaisuri Norashikin (HTPN), Kajang, Ministry of Health Malaysia, finalise an official Grand IPC Round audit report.",
+"",
+"TASK",
+"Using ONLY the audit data below, produce the final report as a downloadable Word document (.docx, A4 portrait). If I have attached a sample report (PDF), copy its layout and style exactly.",
+"",
+"RULES",
+"1. Correct the language, grammar and spelling of every finding and write the report in clear, formal British English. Translate any Bahasa Malaysia finding text into English, but keep the section/component names exactly as given.",
+"2. Do NOT invent, remove or merge findings, and do NOT change any number, score or percentage. If a finding has no description, write the checklist item as the finding.",
+"3. For EACH finding, write specific, practical, numbered recommendations suited to a Malaysian MOH hospital (who should do what, and how it will be monitored). Add an interim measure (marked with –) where the full fix will take time.",
+"4. Support each recommendation with citations in square brackets, e.g. [1] or [1, 5], that point to the reference list. Use only real, verifiable guidelines; prefer the list below and add others only if you are certain they exist. Never fabricate a reference. Give priority to MOH Malaysia policy.",
+"5. Keep the tone professional and constructive — this report goes to the Head of Department.",
+"",
+"REPORT LAYOUT (follow in this order)",
+"A. Header: HOSPITAL TENGKU PERMAISURI NORASHIKIN (HTPN), KAJANG — INFECTION CONTROL AUDIT REPORT — GRAND IPC ROUND. Date, Location / Ward, Auditor: Infection Control Unit, HTPN.",
+"B. Overall Compliance box: percentage, performance band (Good ≥90%, Satisfactory 70–89%, Needs Improvement <70%), and 'x compliant / y applicable · z non-compliant (NA excluded)'.",
+"C. Compliance by Section table: Component | Compliant | Partial | Non-compliant | Applicable | Compliance %. Section rows in bold, component rows under them. Shade %: green ≥90, amber 70–89, red <70.",
+"D. Compliance Rate by Component — a bar chart (one bar per component, same colour rule) with a short legend.",
+"E. Non-Compliant Findings & Recommendations table: No | Finding (Section · Component, then the corrected finding) | Recommendation (numbered, with citations). Show photo links under the finding if given.",
+"F. Summary & Recommendation: one paragraph with overall and per-section scores; 'Areas of good practice (100%)'; 'Priority gaps (<50%)'; then group the non-compliances into 3–5 main themes.",
+"G. Overall Recommendation: (1) Corrective action plan (CAP) from the Head of Department and staff in charge to UKI with person-in-charge, due one month after the audit date (state the exact date); (2) Immediate actions (≤1 week); (3) Short-term actions (≤1 month); (4) Facility / engineering works (≤3 months); (5) Training.",
+"H. Reference list (Vancouver style, numbered to match the citations).",
+"I. Signature block — left: 'Laporan disediakan oleh:' "+(prep||"[auditor name]")+", Pegawai Kawalan Jangkitan, Unit Kawalan Infeksi (UKI), HTPN. Right: 'Laporan disemak oleh:' Dr Nor Zaila Binti Zaidan, Ketua Unit Kawalan Infeksi, HTPN.",
+"Add page numbers (x/y) and the running header 'IPC Audit Report'. Name the file: IPC Audit Report - "+a.ward+" - "+day+".docx",
+"",
+"PREFERRED REFERENCES",
+"1. Ministry of Health Malaysia. Policies and Procedures on Infection Prevention and Control. 3rd ed. Putrajaya: Medical Care Quality Section, Medical Development Division, MOH; 2019.",
+"2. Health and Safety Executive (HSE). Managing infection risks when handling the deceased (HSG283). HSE Books; 2018. (mortuary / forensic only)",
+"3. Jensen PA, et al.; CDC. Guidelines for preventing the transmission of Mycobacterium tuberculosis in health-care settings, 2005. MMWR Recomm Rep. 2005;54(RR-17):1-141.",
+"4. Siegel JD, et al.; HICPAC. 2007 Guideline for Isolation Precautions: Preventing Transmission of Infectious Agents in Healthcare Settings. Atlanta: CDC; 2007.",
+"5. Sehulster L, Chinn RYW; CDC; HICPAC. Guidelines for environmental infection control in health-care facilities. MMWR Recomm Rep. 2003;52(RR-10):1-42.",
+"6. Rutala WA, Weber DJ; HICPAC. Guideline for Disinfection and Sterilization in Healthcare Facilities, 2008. Atlanta: CDC; 2008 (updated May 2019).",
+"7. World Health Organization. WHO Guidelines on Hand Hygiene in Health Care. Geneva: WHO; 2009.",
+"8. Department of Health (England). Health Building Note 00-09: Infection control in the built environment. London: DH; 2013.",
+"9. Department of Health (England). Health Building Note 00-10 Part C: Sanitary assemblies. London: DH; 2013.",
+"10. ANSI/ASHRAE/ASHE Standard 170-2021. Ventilation of Health Care Facilities. Atlanta: ASHRAE; 2021.",
+"11. Occupational Safety and Health (USECHH) Regulations 2000, Occupational Safety and Health Act 1994 (Act 514), Malaysia.",
+"12. World Health Organization. Guidelines on core components of infection prevention and control programmes at the national and acute health care facility level. Geneva: WHO; 2016.",
+"Only list the references you actually cite, renumbered in order of first citation.",
+"",
+"AUDIT DATA",
+"Hospital: HTPN, Kajang",
+"Date of audit: "+day,
+"Location / Ward: "+a.ward,
+"Dr in-charge: "+(a.auditor||"-"),
+"Overall compliance: "+a.overall+"% ("+perf.en+") — "+y+" compliant, "+p+" partial, "+n+" non-compliant, "+(y+p+n)+" applicable (NA excluded; partial scored as 0.5).",
+"",
+"Compliance by section and component:",
+secLines.join("\n")||"(none)",
+"",
+"Non-compliant / partial findings ("+(a.negatives||[]).length+"):",
+negLines.join("\n\n")||"(none — fully compliant)"
+  ].join("\n");
+}
+function copyText(txt){
+  if(navigator.clipboard && window.isSecureContext) return navigator.clipboard.writeText(txt);
+  return new Promise(function(res,rej){ try{ const ta=document.createElement("textarea"); ta.value=txt; ta.style.position="fixed"; ta.style.opacity="0"; document.body.appendChild(ta); ta.select(); document.execCommand("copy"); ta.remove(); res(); }catch(e){ rej(e); } });
+}
+function openClaudePrompt(idx){
+  const a=audits[idx]; if(!a) return;
+  const txt=buildClaudePrompt(a);
+  const ms=lang==='ms';
+  let ov=document.getElementById("aiPromptOv"); if(ov) ov.remove();
+  ov=document.createElement("div"); ov.id="aiPromptOv";
+  ov.style.cssText="position:fixed;inset:0;background:rgba(0,0,0,.45);z-index:9999;display:flex;align-items:center;justify-content:center;padding:14px";
+  ov.innerHTML=`<div style="background:#fff;border-radius:14px;max-width:640px;width:100%;max-height:92vh;display:flex;flex-direction:column;padding:16px;box-shadow:0 10px 30px rgba(0,0,0,.25)">
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px"><b style="font-size:15px">🤖 ${ms?'Prompt AI untuk laporan':'AI prompt for report'} — ${esc(a.ward)}</b>
+      <button onclick="document.getElementById('aiPromptOv').remove()" style="border:none;background:none;font-size:20px;cursor:pointer">✕</button></div>
+    <ol style="font-size:12.5px;line-height:1.55;margin:0 0 10px 18px;padding:0;color:#33443b">
+      <li>${ms?'Tekan <b>Salin prompt</b>.':'Tap <b>Copy prompt</b>.'}</li>
+      <li>${ms?'Tekan <b>Buka Claude</b>, tampal (paste) prompt dalam chat baru.':'Tap <b>Open Claude</b> and paste it into a new chat.'}</li>
+      <li>${ms?'(Pilihan) Lampirkan contoh laporan PDF yang dah siap (cth. laporan Mortuary) supaya format sama.':'(Optional) attach a finished sample report PDF so the layout matches.'}</li>
+      <li>${ms?'Semak hasil, muat turun Word, minta tandatangan, kemudian guna <b>Muat naik / pautan laporan bertandatangan</b>.':'Review, download the Word file, get it signed, then use <b>Upload / link signed report</b>.'}</li>
+    </ol>
+    <textarea readonly style="flex:1;min-height:220px;width:100%;font-family:ui-monospace,Consolas,monospace;font-size:11.5px;border:1px solid #d5ddd8;border-radius:8px;padding:8px;resize:vertical">${esc(txt)}</textarea>
+    <div style="display:flex;gap:8px;margin-top:10px">
+      <button id="aiCopyBtn" style="flex:1;font:700 14px inherit;font-family:inherit;padding:11px;border:none;border-radius:9px;background:#137a41;color:#fff;font-weight:700;cursor:pointer">📋 ${ms?'Salin prompt':'Copy prompt'}</button>
+      <a href="https://claude.ai/new" target="_blank" rel="noopener" style="flex:1;font-size:14px;padding:11px;border-radius:9px;border:1.5px solid #137a41;color:#137a41;font-weight:700;text-align:center;text-decoration:none">↗ ${ms?'Buka Claude':'Open Claude'}</a>
+    </div></div>`;
+  document.body.appendChild(ov);
+  ov.addEventListener("click",function(e){ if(e.target===ov) ov.remove(); });
+  document.getElementById("aiCopyBtn").onclick=function(){
+    copyText(txt).then(function(){ toast(ms?"✅ Prompt disalin — tampal dalam Claude.":"✅ Prompt copied — paste it into Claude."); })
+      .catch(function(){ const ta=ov.querySelector("textarea"); ta.focus(); ta.select(); toast(ms?"Salin manual: teks dah dipilih, tekan Ctrl+C.":"Copy manually: text selected, press Ctrl+C.",true); });
+  };
 }
 function openSavedAuditReport(idx){
   var a=audits[idx]; if(!a)return;
@@ -2243,11 +2389,13 @@ function renderAuditList(){
       ? `<a class="a-line ac-btn" href="${esc(a.driveLink)}" target="_blank" rel="noopener">📁 ${lang==='ms'?'Laporan rasmi (bertandatangan)':'Official signed report'}</a>`
         + (canEditLink?`<button class="a-line ac-btn" onclick="promptDriveLink(${i})">✏️ ${lang==='ms'?'Tukar pautan':'Edit link'}</button>`:"")
       : (canEditLink?`<button class="a-line ac-btn" onclick="promptDriveLink(${i})">🔗 ${lang==='ms'?'Muat naik / pautan laporan bertandatangan':'Upload / link signed report'}</button>`:"");
+    const aiBtn = (canEditLink && hasAuditData(a)) ? `<button class="a-line ac-btn" onclick="openClaudePrompt(${i})">🤖 ${lang==='ms'?'Prompt AI — kemas bahasa, cadangan & rujukan':'AI prompt — polish, recommendations & references'}</button>` : "";
     return `<div class="aud-card">
       <div class="ac-top"><div class="ac-ward">${esc(a.ward)}</div>
         <span class="wbadge ${cls}">${a.overall}% · ${lang==='ms'?perf.ms:perf.en}</span></div>
       <div class="ac-meta">${esc(a.date)} · ${t("by_word")} ${esc(a.auditor||"-")} · <b>${neg}</b> ${t("aud_neg")}</div>
       ${reportBtn}
+      ${aiBtn}
       ${driveBtn}
     </div>`;
   }).join("") : `<div class="empty"><div class="ic">📋</div><p>${t("aud_none_yet")}</p></div>`;
@@ -2416,7 +2564,7 @@ function reportHTML(list){
     </tr>`;
   }).join("");
   const preparer = esc(user && user.name ? user.name : "");
-  return `<!doctype html><html><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>IPC Findings Report</title><style>
+  return `<!doctype html><html><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>${esc(reportFileName("IPC Findings Report", (function(){ var w=[]; list.forEach(function(it){ if(it.wad && w.indexOf(it.wad)<0) w.push(it.wad); }); return w.length>3 ? w.slice(0,3).join(", ")+" +"+(w.length-3) : w.join(", "); })(), gen))}</title><style>
    *{box-sizing:border-box}body{font-family:-apple-system,Segoe UI,Roboto,Arial,sans-serif;color:#1f2a24;margin:0;background:#eceeed}
    .doc{max-width:820px;margin:0 auto;padding:30px;background:#fff;font-size:13px;line-height:1.55;overflow-x:hidden}
    body{overflow-x:hidden}
@@ -2484,7 +2632,7 @@ function reportHTML(list){
        +".sign{margin-top:40px}.sblk{display:inline-block;width:45%;vertical-align:top;margin-right:4%}.slbl{margin-bottom:36px}.sline{border-bottom:1px solid #333}.srole{font-size:9pt;color:#555}";
      var html="<html xmlns:o='urn:schemas-microsoft-com:office:office' xmlns:w='urn:schemas-microsoft-com:office:word' xmlns='http://www.w3.org/TR/REC-html40'><head><meta charset='utf-8'><style>"+css+"</style></head><body>"+doc.outerHTML+"</body></html>";
      var blob=new Blob([String.fromCharCode(65279)+html],{type:'application/msword'});
-     var a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download='IPC-Findings-Report.doc';document.body.appendChild(a);a.click();a.remove();
+     var a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download=(document.title||'IPC-Findings-Report')+'.doc';document.body.appendChild(a);a.click();a.remove();
      setTimeout(function(){URL.revokeObjectURL(a.href);},2000);
    }
    <\/script>
